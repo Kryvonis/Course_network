@@ -1,4 +1,5 @@
-function GetDate() {
+function GetDate(context) {
+console.log(context)
 document.getElementById('demo').innerHTML = Date()
 var $myCanvas = $('#MainCanvas');
 

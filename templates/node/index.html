@@ -8,12 +8,11 @@
 <p>Hello from index</p>
 </body>
 <button type="button"
-        onclick="GetDate()">
+        onclick="GetDate({{context}})">
     Click me to display Date and Time.
 </button>
 <p id="demo"></p>
 {% load static %}
-
 <canvas id="MainCanvas" width="500" height="500"></canvas>
 <script src="{% static 'node/js/jquery.min.js' %}"></script>
 <script src="{% static 'node/js/jcanvas.min.js' %}"></script>

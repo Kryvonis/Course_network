@@ -4,8 +4,7 @@ import json
 
 
 class ChanelSerializer:
-    @staticmethod
-    def encode(o):
+    def encode(self,o):
         attr = {'id': o.id,
                 'weight': o.weight,
                 'fromX': o.fromX,
@@ -13,7 +12,4 @@ class ChanelSerializer:
                 'fromY': o.fromY,
                 'toY': o.toY,
                 }
-        return json.dumps(attr)
-
-        # def decode(self, o):
-        #     return Chanel()
+        return json.loads(json.dumps(attr))

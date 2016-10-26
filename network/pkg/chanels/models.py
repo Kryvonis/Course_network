@@ -23,7 +23,7 @@ class Chanel:
         return '%s(%s)' % (cls, ', '.join(attr))
 
     def to_json(self):
-        return ChanelSerializer.encode(self)
+        return ChanelSerializer().encode(self)
 
 
 class TypedChanel(Chanel):
@@ -34,10 +34,12 @@ class TypedChanel(Chanel):
 
 if __name__ == '__main__':
     c = TypedChanel()
+
     print(c.__repr__())
     lol = c.to_json()
     print(type(lol))
     print(lol)
+    print(ChanelSerializer().encode(c))
     # t = Chanel().from_json(json.loads(lol))
     # print(t.__repr__())
 
