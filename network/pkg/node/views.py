@@ -5,4 +5,4 @@ from network.pkg.chanels.models import Chanel, ChanelSerializer
 
 # Create your views here.
 def index(request):
-    return render(request, 'node/index.html', context=ChanelSerializer().encode(Chanel()))
+    return render(request, 'node/index.html', context={"context": ChanelSerializer().encode(Chanel())})
