@@ -11,5 +11,6 @@ class ChanelSerializer:
                 'toX': o.toX,
                 'fromY': o.fromY,
                 'toY': o.toY,
+                'type': o.type
                 }
         return json.loads(json.dumps(attr))

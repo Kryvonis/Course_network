@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'network.pkg.node',
+    'network.pkg.chanels',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +120,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static') ]
 STATIC_URL = '/static/'
 
 
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'TEST_CHARSET': 'UTF8',
+        'TEST_NAME': ':memory:',
+    }
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

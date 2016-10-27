@@ -5,13 +5,14 @@ from network.pkg.chanels.serializers import ChanelSerializer
 
 # Create your models here.
 class Chanel:
-    def __init__(self, id=0, weight=0, fromX=0, toX=1, fromY=0, toY=1):
+    def __init__(self, id=0, weight=0, fromX=0, toX=1, fromY=0, toY=1, type='duplex'):
         self.id = id
         self.weight = weight
         self.fromX = fromX
         self.toX = toX
         self.fromY = fromY
         self.toY = toY
+        self.type = type
 
     def __str__(self, *args, **kwargs):
         return ','.join((str(value) for value in self.__dict__.values()))
@@ -26,14 +27,8 @@ class Chanel:
         return ChanelSerializer().encode(self)
 
 
-class TypedChanel(Chanel):
-    def __init__(self):
-        super().__init__()
-        self.type = 'duplex'
-
-
 if __name__ == '__main__':
-    c = TypedChanel()
+    c = Chanel()
 
     print(c.__repr__())
     lol = c.to_json()
