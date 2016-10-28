@@ -1,11 +1,9 @@
 # from django.db import models
-import json
-from network.pkg.chanels.serializers import ChanelSerializer
-
-
 # Create your models here.
+
+
 class Chanel:
-    def __init__(self, id=0, weight=0, from_x=0, to_x=1, from_y=0, to_y=1, chanel_type='duplex'):
+    def __init__(self, id=0, weight=0, from_x=0, to_x=1, from_y=0, to_y=1, chanel_type='Duplex'):
         self.id = id
         self.weight = weight
         self.fromX = from_x
@@ -22,3 +20,11 @@ class Chanel:
         attr = ('%s=%s' % item for item in self.__dict__.items())
 
         return '%s(%s)' % (cls, ', '.join(attr))
+
+    def __eq__(self, *args, **kwargs):
+        if not isinstance(args[0], Chanel):
+            return False
+        if args[0].__dict__ != self.__dict__:
+            return False
+        return True
+        # return super().__eq__(*args, **kwargs)

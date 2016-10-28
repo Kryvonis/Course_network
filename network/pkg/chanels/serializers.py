@@ -1,10 +1,10 @@
-from json import JSONEncoder, JSONDecoder
-# from network.pkg.chanels.models import Chanel
+from network.pkg.chanels.models import Chanel
 import json
+from json import JSONEncoder
 
 
-class ChanelSerializer:
-    def encode(self,o):
+class JSONChanelSerializer(JSONEncoder):
+    def encode(self, o):
         attr = {'id': o.id,
                 'weight': o.weight,
                 'fromX': o.fromX,
@@ -13,4 +13,9 @@ class ChanelSerializer:
                 'toY': o.toY,
                 'type': o.type
                 }
-        return json.loads(json.dumps(attr))
+        return json.dumps(attr)
+
+    @classmethod
+    def decode(cls, o):
+        o = json.loads(o)
+        return Chanel(o['id'], o['weight'], o['fromX'], o['toX'], o['fromY'], o['toY'], o['type'])
