@@ -26,13 +26,13 @@ class ChanelTestCase(TestCase):
 
     def test_correct_json(self):
         obj = Node(0, [], self.rout_table, 0, 0)
-        self.assertEqual(json.dumps(obj, cls=JSONNodeSerializer),
-                         json.dumps({'id': 0,
-                                     'table': json.dumps(self.rout_table, cls=JSONRouteTableSerializer),
-                                     'X': 0,
-                                     'Y': 0,
-                                     'chanels': [],
-                                     }))
+        self.assertEqual(json.loads(json.dumps(obj, cls=JSONNodeSerializer)),
+                         json.loads(json.dumps({'id': 0,
+                                                'table': json.dumps(self.rout_table, cls=JSONRouteTableSerializer),
+                                                'X': 0,
+                                                'Y': 0,
+                                                'chanels': [],
+                                                })))
 
     def test_create_from_json(self):
         obj = Node(0, [], self.rout_table, 0, 0)

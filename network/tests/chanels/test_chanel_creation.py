@@ -23,15 +23,15 @@ class ChanelTestCase(TestCase):
 
     def test_correct_json(self):
         obj = Chanel(0, 0, 0, 0, 0, 0, 'Duplex')
-        self.assertEqual(json.dumps(obj, cls=JSONChanelSerializer),
-                         json.dumps({'id': 0,
-                                     'weight': 0,
-                                     'fromX': 0,
-                                     'toX': 0,
-                                     'fromY': 0,
-                                     'toY': 0,
-                                     'type': 'Duplex',
-                                     }))
+        self.assertEqual(json.loads(json.dumps(obj, cls=JSONChanelSerializer)),
+                         json.loads(json.dumps({'id': 0,
+                                                'weight': 0,
+                                                'fromX': 0,
+                                                'toX': 0,
+                                                'fromY': 0,
+                                                'toY': 0,
+                                                'type': 'Duplex',
+                                                })))
 
     def test_create_from_json(self):
         obj = Chanel(0, 0, 0, 0, 0, 0, 'Duplex')
