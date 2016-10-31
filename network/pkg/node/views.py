@@ -11,14 +11,14 @@ import json
 
 # Create your views here.
 def index(request):
-    network,nodes,channels = generate_randomly()
+    # network,nodes,channels = generate_randomly()
     # generate objects randomly
     rt0 = RouteTable(0, [0, 1], [0, 5], 0)
     rt1 = RouteTable(1, [1, 0], [0, 5], 0)
     chanel1 = Channel(0, 5, 0, 50, 0, 50, 0, 1)
 
-    node0 = Node(0, chanel1, rt0, 100, 100)
-    node1 = Node(1, chanel1, rt1, 300, 300)
+    node0 = Node(0, [chanel1], rt0, 100, 100)
+    node1 = Node(1, [chanel1], rt1, 300, 300)
 
     network = [node0, node1]
     context = {'network':json.loads(json.dumps(network, cls=JSONNetworkSerializer)),

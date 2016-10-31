@@ -13,8 +13,8 @@ def generate_randomly():
 
     for i in range(5):
         channels.append(Channel(i,weights[i],))
-    for i in range(5):
-        route_tables.append(RouteTable(i, [i, ], [0, ], i))
+    # for i in range(5):
+    #     route_tables.append(RouteTable(i, [i, ], [0, ], i))
 
     for i in range(1,5):
 

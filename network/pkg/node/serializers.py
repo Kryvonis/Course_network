@@ -8,8 +8,8 @@ from network.pkg.chanels.serializers import JSONChanelSerializer
 class JSONNodeSerializer(JSONEncoder):
     def encode(self, o):
         attr = {'id': o.id,
-                'channels': json.dumps(o.channels, cls=JSONChanelSerializer),
-                'table': json.dumps(o.table, cls=JSONRouteTableSerializer),
+                'channels': json.loads(json.dumps(o.channels, cls=JSONChanelSerializer)),
+                'table': json.loads(json.dumps(o.table, cls=JSONRouteTableSerializer)),
                 'X': o.X,
                 'Y': o.Y,
                 }
