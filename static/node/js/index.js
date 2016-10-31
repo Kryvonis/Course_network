@@ -29,7 +29,7 @@ function Generate(network) {
             x: nodes[i].X,
             y: nodes[i].Y,
             radius: 30,
-            shadowX: -1, shadowY: 8,
+            shadowX: -1, shadowY: 3,
             shadowBlur: i,
             shadowColor: 'rgba(0, 0, 0, 0.5)',
             drag: function(layer) {

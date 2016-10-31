@@ -5,11 +5,13 @@ from network.pkg.chanels.models import Channel
 from network.pkg.routing.models import RouteTable
 from network.pkg.node.serializers import JSONNodeSerializer,JSONNetworkSerializer
 from network.pkg.chanels.serializers import JSONChanelSerializer
+from network.pkg.node.creator import generate_randomly
 import json
 
 
 # Create your views here.
 def index(request):
+    network,nodes,channels = generate_randomly()
     # generate objects randomly
     rt0 = RouteTable(0, [0, 1], [0, 5], 0)
     rt1 = RouteTable(1, [1, 0], [0, 5], 0)
