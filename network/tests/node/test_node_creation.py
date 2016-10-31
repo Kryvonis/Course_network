@@ -22,7 +22,7 @@ class ChanelTestCase(TestCase):
                               'table': self.rout_table,
                               'X': 0,
                               'Y': 0,
-                              'chanels': [],
+                              'channels': [],
                               })
 
     def test_correct_json(self):
@@ -32,7 +32,7 @@ class ChanelTestCase(TestCase):
                                                 'table': json.dumps(self.rout_table, cls=JSONRouteTableSerializer),
                                                 'X': 0,
                                                 'Y': 0,
-                                                'chanels': [],
+                                                'channels': '[]',
                                                 })))
 
     def test_create_from_json(self):
@@ -51,4 +51,3 @@ class ChanelTestCase(TestCase):
 
         network = [node0, node1]
         self.assertIsNotNone(network)
-        print(json.dumps(network, cls=JSONNetworkSerializer))

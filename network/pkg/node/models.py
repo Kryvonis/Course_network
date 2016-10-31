@@ -4,9 +4,9 @@ from network.pkg.routing.models import RouteTable
 
 # Create your models here.
 class Node:
-    def __init__(self, id, chanels, table: RouteTable, X, Y):
+    def __init__(self, id, channels, table: RouteTable, X, Y):
         self.id = id
-        self.chanels = chanels
+        self.channels = channels
         self.table = table
         self.X = X
         self.Y = Y

@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from network.pkg.node.models import Node
 from network.pkg.chanels.models import Channel
 from network.pkg.routing.models import RouteTable
-from network.pkg.node.serializers import JSONNodeSerializer
+from network.pkg.node.serializers import JSONNodeSerializer,JSONNetworkSerializer
+from network.pkg.chanels.serializers import JSONChanelSerializer
 import json
 
 
@@ -14,9 +15,14 @@ def index(request):
     rt1 = RouteTable(1, [1, 0], [0, 5], 0)
     chanel1 = Channel(0, 5, 0, 50, 0, 50, 0, 1)
 
-    node0 = Node(0, chanel1, rt0, 0, 0)
-    node1 = Node(1, chanel1, rt1, 50, 50)
+    node0 = Node(0, chanel1, rt0, 100, 100)
+    node1 = Node(1, chanel1, rt1, 300, 300)
 
     network = [node0, node1]
+    context = {'network':json.loads(json.dumps(network, cls=JSONNetworkSerializer)),
+               'nodes':[json.loads(json.dumps(node0,cls=JSONNodeSerializer)),
+                        json.loads(json.dumps(node1, cls=JSONNodeSerializer))],
+               'channels':[json.loads(json.dumps(chanel1,cls=JSONChanelSerializer))]}
+
     return render(request, 'node/index.html',
-                  context={"network": json.loads(json.dumps(network, cls=JSONNodeSerializer))})
+                  context={"network": context})
