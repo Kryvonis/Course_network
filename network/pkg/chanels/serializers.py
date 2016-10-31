@@ -1,4 +1,4 @@
-from network.pkg.chanels.models import Chanel
+from network.pkg.chanels.models import Channel
 import json
 from json import JSONEncoder
 
@@ -11,6 +11,8 @@ class JSONChanelSerializer(JSONEncoder):
                 'toX': o.toX,
                 'fromY': o.fromY,
                 'toY': o.toY,
+                'start_node_id': o.start_node_id,
+                'end_node_id': o.end_node_id,
                 'type': o.type
                 }
         return json.dumps(attr)
@@ -18,4 +20,6 @@ class JSONChanelSerializer(JSONEncoder):
     @classmethod
     def decode(cls, o):
         o = json.loads(o)
-        return Chanel(o['id'], o['weight'], o['fromX'], o['toX'], o['fromY'], o['toY'], o['type'])
+        return Channel(o['id'], o['weight'], o['fromX'], o['toX'], o['fromY'], o['toY'], o['start_node_id'],
+                       o['end_node_id'],
+                       o['type'])

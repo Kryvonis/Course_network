@@ -2,8 +2,8 @@
 # Create your models here.
 
 
-class Chanel:
-    def __init__(self, id=0, weight=0, from_x=0, to_x=1, from_y=0, to_y=1, chanel_type='Duplex'):
+class Channel:
+    def __init__(self, id, weight, from_x, to_x, from_y, to_y, snid, enid, chanel_type='Duplex'):
         self.id = id
         self.weight = weight
         self.fromX = from_x
@@ -11,6 +11,8 @@ class Chanel:
         self.fromY = from_y
         self.toY = to_y
         self.type = chanel_type
+        self.start_node_id = snid
+        self.end_node_id = enid
 
     def __str__(self, *args, **kwargs):
         return ','.join((str(value) for value in self.__dict__.values()))
@@ -22,7 +24,7 @@ class Chanel:
         return '%s(%s)' % (cls, ', '.join(attr))
 
     def __eq__(self, *args, **kwargs):
-        if not isinstance(args[0], Chanel):
+        if not isinstance(args[0], Channel):
             return False
         if args[0].__dict__ != self.__dict__:
             return False
