@@ -4,12 +4,14 @@ from network.pkg.node.models import Node
 weights = (1,2,3,4,5,6,7)
 
 
-def generate_randomly():
+def generate_randomly(number_of_nodes):
     """
     Create random network
     :return: network,nodes,channels
     """
+
     channels = []
+    for i in range(number_of_nodes):
 
     for i in range(5):
         channels.append(Channel(i,weights[i],))

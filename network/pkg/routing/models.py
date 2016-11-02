@@ -3,8 +3,8 @@ from django.db import models
 
 # Create your models here.
 class RouteTable:
-    def __init__(self, id, addresses, metric, path):
-        self.node_id = id
+    def __init__(self, node_id, addresses, metric, path):
+        self.node_id = node_id
         self.addresses = addresses
         self.metric = metric
         self.path = path

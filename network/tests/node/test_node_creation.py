@@ -2,6 +2,7 @@ from django.test import TestCase
 from network.pkg.node.models import Node
 from network.pkg.routing.models import RouteTable
 from network.pkg.chanels.models import Channel
+from network.pkg.chanels.serializers import JSONChanelSerializer
 from network.pkg.node.serializers import JSONNodeSerializer, JSONNetworkSerializer
 from network.pkg.routing.serializers import JSONRouteTableSerializer
 import json
@@ -27,17 +28,17 @@ class ChanelTestCase(TestCase):
 
     def test_correct_json(self):
         obj = Node(0, [], self.rout_table, 0, 0)
-        self.assertEqual(json.loads(json.dumps(obj, cls=JSONNodeSerializer)),
-                         json.loads(json.dumps({'id': 0,
-                                                'table': json.dumps(self.rout_table, cls=JSONRouteTableSerializer),
-                                                'X': 0,
-                                                'Y': 0,
-                                                'channels': '[]',
-                                                })))
+        self.assertEqual(JSONNodeSerializer.encode(obj),
+                         {'id': 0,
+                          'table': JSONRouteTableSerializer.encode(self.rout_table),
+                          'X': 0,
+                          'Y': 0,
+                          'channels': JSONChanelSerializer.encode([]),
+                          })
 
     def test_create_from_json(self):
         obj = Node(0, [], self.rout_table, 0, 0)
-        json_obj = json.dumps(obj, cls=JSONNodeSerializer)
+        json_obj = JSONNodeSerializer.encode(obj)
         self.assertEqual(obj,
                          JSONNodeSerializer.decode(json_obj))
 

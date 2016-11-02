@@ -3,16 +3,16 @@
 
 
 class Channel:
-    def __init__(self, id, weight, from_x, to_x, from_y, to_y, snid, enid, chanel_type='Duplex'):
+    def __init__(self, id, weight, fromX, toX, fromY, toY, start_node_id, end_node_id, type='Duplex'):
         self.id = id
         self.weight = weight
-        self.fromX = from_x
-        self.toX = to_x
-        self.fromY = from_y
-        self.toY = to_y
-        self.type = chanel_type
-        self.start_node_id = snid
-        self.end_node_id = enid
+        self.fromX = fromX
+        self.toX = toX
+        self.fromY = fromY
+        self.toY = toY
+        self.type = type
+        self.start_node_id = start_node_id
+        self.end_node_id = end_node_id
 
     def __str__(self, *args, **kwargs):
         return ','.join((str(value) for value in self.__dict__.values()))

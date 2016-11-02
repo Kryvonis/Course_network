@@ -3,10 +3,12 @@ from django.http import HttpResponse
 from network.pkg.node.models import Node
 from network.pkg.chanels.models import Channel
 from network.pkg.routing.models import RouteTable
-from network.pkg.node.serializers import JSONNodeSerializer,JSONNetworkSerializer
+from network.pkg.node.serializers import JSONNodeSerializer, JSONNetworkSerializer
 from network.pkg.chanels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_randomly
 import json
+
+network = []
 
 
 # Create your views here.
@@ -20,11 +22,12 @@ def index(request):
     node0 = Node(0, [chanel1], rt0, 100, 100)
     node1 = Node(1, [chanel1], rt1, 300, 300)
 
-    network = [node0, node1]
-    context = {'network':json.loads(json.dumps(network, cls=JSONNetworkSerializer)),
-               'nodes':[json.loads(json.dumps(node0,cls=JSONNodeSerializer)),
-                        json.loads(json.dumps(node1, cls=JSONNodeSerializer))],
-               'channels':[json.loads(json.dumps(chanel1,cls=JSONChanelSerializer))]}
-
+    network.append(node0)
+    network.append(node1)
+    context = {'network': JSONNetworkSerializer.encode(network),
+               'nodes': [JSONNodeSerializer.encode(node0),
+                         JSONNodeSerializer.encode(node1)],
+               'channels': [JSONChanelSerializer.encode(chanel1)]}
+    print(len(network))
     return render(request, 'node/index.html',
                   context={"network": context})

@@ -5,31 +5,33 @@ from network.pkg.routing.serializers import JSONRouteTableSerializer
 from network.pkg.chanels.serializers import JSONChanelSerializer
 
 
-class JSONNodeSerializer(JSONEncoder):
-    def encode(self, o):
+class JSONNodeSerializer:
+    @classmethod
+    def encode(cls, o):
         attr = {'id': o.id,
-                'channels': json.loads(json.dumps(o.channels, cls=JSONChanelSerializer)),
-                'table': json.loads(json.dumps(o.table, cls=JSONRouteTableSerializer)),
+                'channels': JSONChanelSerializer.encode(o.channels),
+                'table': JSONRouteTableSerializer.encode(o.table),
                 'X': o.X,
                 'Y': o.Y,
                 }
-        return json.dumps(attr)
+        return attr
 
     @classmethod
     def decode(cls, o):
-        o = json.loads(o)
         table = JSONRouteTableSerializer.decode(o['table'])
         channels = JSONChanelSerializer.decode(o['channels'])
         return Node(o['id'], channels, table, o['X'], o['Y'])
 
 
-class JSONNetworkSerializer(JSONEncoder):
-    def encode(self, o):
-        attr = [json.dumps(node, cls=JSONNodeSerializer) for node in o]
-        return json.dumps(attr)
+class JSONNetworkSerializer:
+    @classmethod
+    def encode(cls, o):
+        attr = [JSONNodeSerializer.encode(node) for node in o]
+        return attr
 
     @classmethod
     def decode(cls, o):
-        o = json.loads(o)
+        network = []
         for item in o:
-            JSONNodeSerializer.decode(item)
+            network.append(JSONNodeSerializer.decode(item))
+        return network

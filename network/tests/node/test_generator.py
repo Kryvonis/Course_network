@@ -1,1 +1,1 @@
-from network.pkg.node.creator import generateRandomly
+from network.pkg.node.creator import generate_randomly
