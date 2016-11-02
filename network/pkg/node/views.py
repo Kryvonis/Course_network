@@ -29,9 +29,8 @@ def index(request):
     #            'nodes': JSONNetworkSerializer.encode(network),
     #            'channels': [JSONChanelSerializer.encode(chanel1)]}
 
-    network, nodes, channels = generate_randomly(5)
-    context = {'network': JSONNetworkSerializer.encode(network),
-               'nodes': JSONNetworkSerializer.encode(nodes),
+    nodes, channels = generate_randomly(5)
+    context = {'nodes': JSONNetworkSerializer.encode(nodes),
                'channels': JSONChanelSerializer.encode(channels)}
     print(len(network))
     return render(request, 'node/index.html',

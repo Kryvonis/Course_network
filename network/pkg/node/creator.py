@@ -40,7 +40,7 @@ def generate_randomly(number_of_nodes):
         nodes[i].channels.append(channel)
         nodes[(i + 1) % number_of_nodes].channels.append(channel)
 
-    return nodes, nodes, channels
+    return nodes, channels
     # for i in range(int(number_of_nodes * (number_of_nodes - 1) / 2)):
     #     Channel(i,
     #             weights[random.randint(0, len(weights) - 1)],
@@ -65,5 +65,5 @@ def generate_randomly(number_of_nodes):
     node0 = Node(0, chanel1, rt0, 100, 100)
     node1 = Node(1, chanel1, rt1, 300, 300)
 
-    network = [node0, node1]
-    return network
+    nodes = [node0, node1]
+    return nodes
