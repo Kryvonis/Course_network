@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from network.pkg.node.models import Node
 from network.pkg.chanels.models import Channel
 from network.pkg.routing.models import RouteTable
-from network.pkg.node.serializers import JSONNodeSerializer, JSONNetworkSerializer
+from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.chanels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_randomly
 import json
@@ -28,12 +28,10 @@ def index(request):
     # context = {'network': JSONNetworkSerializer.encode(network),
     #            'nodes': JSONNetworkSerializer.encode(network),
     #            'channels': [JSONChanelSerializer.encode(chanel1)]}
-    network['nodes']
-    network['channels']
     nodes, channels = generate_randomly(5)
     network['nodes'] = nodes
     network['channels'] = channels
-    context = {'nodes': JSONNetworkSerializer.encode(nodes),
+    context = {'nodes': JSONNodeSerializer.encode(nodes),
                'channels': JSONChanelSerializer.encode(channels)}
     print(len(network))
     return render(request, 'node/index.html',
