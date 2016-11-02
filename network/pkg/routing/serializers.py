@@ -5,14 +5,21 @@ from json import JSONEncoder
 
 class JSONRouteTableSerializer:
     @classmethod
-    def encode(cls, o):
-        attr = {'node_id': o.node_id,
-                'addresses': o.addresses,
-                'metric': o.metric,
-                'path': o.path,
-                }
-        return attr
+    def encode(cls, obj):
+        if isinstance(obj, list):
+            routes = []
+            for o in obj:
+                routes.append(o.__dict__)
+            return routes
+        if isinstance(obj, RouteTable):
+            return obj.__dict__
 
     @classmethod
-    def decode(cls, o):
-        return RouteTable(**o)
+    def decode(cls, ojb):
+        if isinstance(ojb, list):
+            routes = []
+            for o in ojb:
+                routes.append(RouteTable(**o))
+            return routes
+        if isinstance(ojb, dict):
+            return RouteTable(**ojb)

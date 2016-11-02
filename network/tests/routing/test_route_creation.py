@@ -4,7 +4,7 @@ from network.pkg.routing.serializers import JSONRouteTableSerializer
 import json
 
 
-class ChanelTestCase(TestCase):
+class RouteTestCase(TestCase):
     def setUp(self):
         self.rout_table = RouteTable(0, [], [], [])
 

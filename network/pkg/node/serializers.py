@@ -9,10 +9,10 @@ class JSONNodeSerializer:
     @classmethod
     def encode(cls, o):
         attr = {'id': o.id,
-                'channels': JSONChanelSerializer.encode(o.channels),
                 'table': JSONRouteTableSerializer.encode(o.table),
                 'X': o.X,
                 'Y': o.Y,
+                'channels': JSONChanelSerializer.encode(o.channels),
                 }
         return attr
 

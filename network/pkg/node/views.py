@@ -15,19 +15,24 @@ network = []
 def index(request):
     # network,nodes,channels = generate_randomly()
     # generate objects randomly
-    rt0 = RouteTable(0, [0, 1], [0, 5], 0)
-    rt1 = RouteTable(1, [1, 0], [0, 5], 0)
-    chanel1 = Channel(0, 5, 0, 50, 0, 50, 0, 1)
+    # rt0 = RouteTable(0, [0, 1], [0, 5], 0)
+    # rt1 = RouteTable(1, [1, 0], [0, 5], 0)
+    # chanel1 = Channel(0, 5, 0, 1)
+    #
+    # node0 = Node(0, [chanel1], rt0, 100, 100)
+    # node1 = Node(1, [chanel1], rt1, 300, 300)
+    #
+    # network.append(node0)
+    # network.append(node1)
 
-    node0 = Node(0, [chanel1], rt0, 100, 100)
-    node1 = Node(1, [chanel1], rt1, 300, 300)
+    # context = {'network': JSONNetworkSerializer.encode(network),
+    #            'nodes': JSONNetworkSerializer.encode(network),
+    #            'channels': [JSONChanelSerializer.encode(chanel1)]}
 
-    network.append(node0)
-    network.append(node1)
+    network, nodes, channels = generate_randomly(5)
     context = {'network': JSONNetworkSerializer.encode(network),
-               'nodes': [JSONNodeSerializer.encode(node0),
-                         JSONNodeSerializer.encode(node1)],
-               'channels': [JSONChanelSerializer.encode(chanel1)]}
+               'nodes': JSONNetworkSerializer.encode(nodes),
+               'channels': JSONChanelSerializer.encode(channels)}
     print(len(network))
     return render(request, 'node/index.html',
                   context={"network": context})

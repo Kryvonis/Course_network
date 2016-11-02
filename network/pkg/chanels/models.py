@@ -3,13 +3,9 @@
 
 
 class Channel:
-    def __init__(self, id, weight, fromX, toX, fromY, toY, start_node_id, end_node_id, type='Duplex'):
+    def __init__(self, id, weight, start_node_id, end_node_id, type='Duplex'):
         self.id = id
         self.weight = weight
-        self.fromX = fromX
-        self.toX = toX
-        self.fromY = fromY
-        self.toY = toY
         self.type = type
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id

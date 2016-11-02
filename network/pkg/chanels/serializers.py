@@ -9,17 +9,7 @@ class JSONChanelSerializer:
         if isinstance(obj, list):
             chanels = []
             for o in obj:
-                attr = {'id': o.id,
-                        'weight': o.weight,
-                        'fromX': o.fromX,
-                        'toX': o.toX,
-                        'fromY': o.fromY,
-                        'toY': o.toY,
-                        'start_node_id': o.start_node_id,
-                        'end_node_id': o.end_node_id,
-                        'type': o.type
-                        }
-                chanels.append(attr)
+                chanels.append(o.__dict__)
             return chanels
         if isinstance(obj, Channel):
             return obj.__dict__
