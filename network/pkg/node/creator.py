@@ -16,14 +16,6 @@ def generate_randomly(number_of_nodes):
     channels = []
     # n*(n+1)/2 = 4 * 3 / 2 = 6
     # Максимальное количество каналов это количетсво вершин(num_of_nodes) + sum(num_of_nodes_2 -> 2)
-    # 4 shape
-    # 4 + sum(4-2,2) = 4 + sum(2,2) = 4 + 2 = 6
-    # 5 shape
-    # 5 + sum(5-2,2) = 5 + sum(3,2) = 5 + 3 + 2 = 10
-    # 6 shape
-    # 6 + sum(6-2,2) = 6 + sum(4,2) = 6 + 4 + 3 + 2 = 15
-    # 7 shape
-    # 7 + sum(7-2,2) = 7 - sum(5,2) = 7 + 6 + 5 + 4 + 3 + 2 + 1=
     nodes = []
 
     # if chanels_num > number_of_nodes*(number_of_nodes-1)/2:

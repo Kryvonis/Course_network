@@ -8,30 +8,28 @@ from network.pkg.chanels.serializers import JSONChanelSerializer
 class JSONNodeSerializer:
     @classmethod
     def encode(cls, o):
-        attr = {'id': o.id,
-                'table': JSONRouteTableSerializer.encode(o.table),
-                'X': o.X,
-                'Y': o.Y,
-                'channels': JSONChanelSerializer.encode(o.channels),
-                }
-        return attr
+        if isinstance(o, Node):
+            attr = {'id': o.id,
+                    'table': JSONRouteTableSerializer.encode(o.table),
+                    'X': o.X,
+                    'Y': o.Y,
+                    'channels': JSONChanelSerializer.encode(o.channels),
+                    }
+            return attr
+        if isinstance(o, list):
+            nodes = []
+            for node in o:
+                nodes.append(JSONNodeSerializer.encode(node))
+            return nodes
 
     @classmethod
     def decode(cls, o):
-        table = JSONRouteTableSerializer.decode(o['table'])
-        channels = JSONChanelSerializer.decode(o['channels'])
-        return Node(o['id'], channels, table, o['X'], o['Y'])
-
-
-class JSONNetworkSerializer:
-    @classmethod
-    def encode(cls, o):
-        attr = [JSONNodeSerializer.encode(node) for node in o]
-        return attr
-
-    @classmethod
-    def decode(cls, o):
-        network = []
-        for item in o:
-            network.append(JSONNodeSerializer.decode(item))
-        return network
+        if isinstance(o, dict):
+            table = JSONRouteTableSerializer.decode(o['table'])
+            channels = JSONChanelSerializer.decode(o['channels'])
+            return Node(o['id'], channels, table, o['X'], o['Y'])
+        if isinstance(o, list):
+            nodes = []
+            for item in o:
+                nodes.append(JSONNodeSerializer.decode(item))
+            return nodes

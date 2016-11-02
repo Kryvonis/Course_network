@@ -8,7 +8,7 @@ from network.pkg.chanels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_randomly
 import json
 
-network = []
+network = {}
 
 
 # Create your views here.
@@ -28,8 +28,11 @@ def index(request):
     # context = {'network': JSONNetworkSerializer.encode(network),
     #            'nodes': JSONNetworkSerializer.encode(network),
     #            'channels': [JSONChanelSerializer.encode(chanel1)]}
-
+    network['nodes']
+    network['channels']
     nodes, channels = generate_randomly(5)
+    network['nodes'] = nodes
+    network['channels'] = channels
     context = {'nodes': JSONNetworkSerializer.encode(nodes),
                'channels': JSONChanelSerializer.encode(channels)}
     print(len(network))
