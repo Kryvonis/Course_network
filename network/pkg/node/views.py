@@ -21,3 +21,16 @@ def index(request):
     print(len(nodes))
     return render(request, 'node/index.html',
                   context={"network": context})
+
+
+def add_node(request):
+    pass
+
+
+def remove_node(reqest, id):
+    # nodes remmove
+    for channel in network['nodes'][id].channels:
+        network['channels'].pop(id)
+    network['nodes'].pop(id)
+
+    return

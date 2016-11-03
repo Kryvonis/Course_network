@@ -52,3 +52,7 @@ class NodeTestCase(TestCase):
 
         network = [node0, node1]
         self.assertIsNotNone(network)
+
+
+    def test_node_add(self):
+       pass

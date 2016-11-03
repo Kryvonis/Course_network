@@ -20,7 +20,7 @@ def generate_randomly(number_of_nodes):
     #     raise ValueError
     # make one region
     for i in range(number_of_nodes):
-        nodes.append(Node(i, [], [], 500 - random.randint(0,500), 500 - random.randint(0,250)))
+        nodes.append(Node(i, [], [], 500 - random.randint(0,400), 500 - random.randint(0,250)))
     for i in range(number_of_nodes):
         channel = Channel(id=i,
                           weight=weights[random.randint(0, len(weights) - 1)],

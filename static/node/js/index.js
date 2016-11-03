@@ -3,6 +3,7 @@ function Generate(network) {
     var nodes = network.nodes;
     var channels = network.channels;
 
+    $myCanvas.removeLayers();
     $myCanvas.clearCanvas();
 
     for (var i = 0; i < channels.length; i++) {
@@ -23,8 +24,9 @@ function Generate(network) {
         $myCanvas.drawArc({
             layer: true,
             draggable: true,
-            bringToFront: true,
-            name: "name" + i,
+            groups: ["node_and_text" + i],
+            dragGroups: ["node_and_text" + i],
+            name: "name_" + i,
             fillStyle: "steelblue",
             x: nodes[i].X,
             y: nodes[i].Y,
@@ -34,35 +36,34 @@ function Generate(network) {
             shadowColor: 'rgba(0, 0, 0, 0.5)',
             drag: function(layer) {
                 var layerName = layer.name;
-                nodes[parseInt(layerName.slice(-1))].X = layer.x;
-                nodes[parseInt(layerName.slice(-1))].Y = layer.y;
-                nodes[parseInt(layerName.slice(-1))].channels.forEach(function (channel) {
+                nodes[parseInt(layer.name.split('_').pop())].X = layer.x;
+                nodes[parseInt(layer.name.split('_').pop())].Y = layer.y;
+                nodes[parseInt(layer.name.split('_').pop())].channels.forEach(function (channel) {
                     var channelName = "channel" + channel.start_node_id + channel.end_node_id;
-                    $myCanvas.getLayer(channelName).x1 = nodes[channel.start_node_id].X;
-                    $myCanvas.getLayer(channelName).y1 = nodes[channel.start_node_id].Y;
-                    $myCanvas.getLayer(channelName).x2 = nodes[channel.end_node_id].X;
-                    $myCanvas.getLayer(channelName).y2 = nodes[channel.end_node_id].Y;
+                    $myCanvas.getLayer(channelName).x1 = find_node(nodes, channel.start_node_id).X;
+                    $myCanvas.getLayer(channelName).y1 = find_node(nodes, channel.start_node_id).Y;
+                    $myCanvas.getLayer(channelName).x2 = find_node(nodes, channel.end_node_id).X;
+                    $myCanvas.getLayer(channelName).y2 = find_node(nodes, channel.end_node_id).Y;
                 });
-                $myCanvas.getLayer("num"+parseInt(layerName.slice(-1))).x = layer.x;
-                $myCanvas.getLayer("num"+parseInt(layerName.slice(-1))).y = layer.y
             }
-        });
-        $myCanvas.drawText({
-          layer: true,
-          name: "num" + i,
-          fillStyle: '#9cf',
-          strokeStyle: '#25a',
-          strokeWidth: 2,
-          x: nodes[i].X,
-          y: nodes[i].Y,
-          fontSize: 30,
-          fontFamily: 'Verdana, sans-serif',
-          text: i
+        }).drawText({
+            layer: true,
+            groups: ["node_and_text" + i],
+            text: nodes[i].id,
+            fontSize: 20,
+            name: "node_number" + i,
+            x: nodes[i].X, y: nodes[i].Y,
+            fillStyle: 'white',
+            strokeStyle: 'white',
+            strokeWidth: 1
         });
     }
 
 }
 
-$(document).ready(function() {
-
-});
+function find_node(nodes, id) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id == id)
+            return nodes[i];
+    }
+}
