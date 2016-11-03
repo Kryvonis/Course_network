@@ -28,7 +28,7 @@ function Generate(network) {
             fillStyle: "steelblue",
             x: nodes[i].X,
             y: nodes[i].Y,
-            radius: 10,
+            radius: 30,
             shadowX: -1, shadowY: 3,
             shadowBlur: i,
             shadowColor: 'rgba(0, 0, 0, 0.5)',
@@ -43,7 +43,21 @@ function Generate(network) {
                     $myCanvas.getLayer(channelName).x2 = nodes[channel.end_node_id].X;
                     $myCanvas.getLayer(channelName).y2 = nodes[channel.end_node_id].Y;
                 });
+                $myCanvas.getLayer("num"+parseInt(layerName.slice(-1))).x = layer.x;
+                $myCanvas.getLayer("num"+parseInt(layerName.slice(-1))).y = layer.y
             }
+        });
+        $myCanvas.drawText({
+          layer: true,
+          name: "num" + i,
+          fillStyle: '#9cf',
+          strokeStyle: '#25a',
+          strokeWidth: 2,
+          x: nodes[i].X,
+          y: nodes[i].Y,
+          fontSize: 30,
+          fontFamily: 'Verdana, sans-serif',
+          text: i
         });
     }
 

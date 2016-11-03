@@ -4,17 +4,10 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<body>
+<body onload="Generate({{network}})">
 <p>Hello from index</p>
 </body>
-<button type="button"
-        onclick="Generate({{network}})">
-    Click me to display Date and Time.
-</button>
-<form>
-    <input type="submit">
-</form>
-<p id="demo"></p>
+
 {% load static %}
 <canvas id="MainCanvas" width="1000" height="1000"></canvas>
 <script src="{% static 'node/js/jquery.min.js' %}"></script>
