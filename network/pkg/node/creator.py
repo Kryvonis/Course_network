@@ -1,13 +1,15 @@
 from network.pkg.routing.models import RouteTable
 from network.pkg.chanels.models import Channel
 from network.pkg.node.models import Node
+from network.pkg.node.serializers import JSONNodeSerializer
+from network.pkg.chanels.serializers import JSONChanelSerializer
 import random
 import math
 
 weights = (1, 2, 3, 4, 5, 6, 7)
 
 
-def generate_randomly(number_of_nodes):
+def generate_randomly():
     """
     Create random network
     :return: network,nodes,channels
@@ -19,15 +21,38 @@ def generate_randomly(number_of_nodes):
     # if chanels_num > number_of_nodes*(number_of_nodes-1)/2:
     #     raise ValueError
     # make one region
-    for i in range(number_of_nodes):
-        nodes.append(Node(i, [], [], 500 - random.randint(0,400), 500 - random.randint(0,250)))
-    for i in range(number_of_nodes):
+    i = 0
+    j = 0
+    for id in range(12):
+        nodes.append(Node(id, [], [], 120 * i + 50, 120 * j + 50))
+        i +=1
+        if i == 4:
+            j +=1
+            i = 0
+    for i in range(12):
         channel = Channel(id=i,
                           weight=weights[random.randint(0, len(weights) - 1)],
                           type='Duplex', start_node_id=i,
-                          end_node_id=((i + 1) % number_of_nodes))
+                          end_node_id=((i + 1) % 12))
         channels.append(channel)
         nodes[i].channels.append(channel)
-        nodes[(i + 1) % number_of_nodes].channels.append(channel)
+        nodes[(i + 1) % 12].channels.append(channel)
+    i = 0
+    j = 0
+    for id in range(12,24):
+        nodes.append(Node(id, [], [], 120 * i + 600, 120 * j + 50))
+        i += 1
+        if i == 4:
+            j += 1
+            i = 0
 
-    return nodes, channels
+    for i in range(12,24):
+        channel = Channel(id=i,
+                          weight=weights[random.randint(0, len(weights) - 1)],
+                          type='Duplex', start_node_id=i,
+                          end_node_id=((i + 1) % 24))
+        channels.append(channel)
+        nodes[i].channels.append(channel)
+        nodes[(i + 1) % 24].channels.append(channel)
+
+    return JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)

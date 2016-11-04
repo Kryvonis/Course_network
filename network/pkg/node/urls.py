@@ -18,7 +18,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', view=views.index, name='index'),
-    url(r'^add/', view=views.add_node, name='index'),
-    url(r'^remove/(?P<id>[0-9])/', view=views.remove_node, name='index'),
+    url(r'^add$', view=views.add_node, name='add'),
+    url(r'^save$', view=views.save_pos, name='save'),
+    url(r'^remove/(?P<id>[0-9])/', view=views.remove_node, name='remove'),
 
 ]

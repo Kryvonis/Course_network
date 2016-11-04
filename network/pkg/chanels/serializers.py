@@ -1,7 +1,5 @@
 from network.pkg.chanels.models import Channel
 import json
-from json import JSONEncoder
-
 
 class JSONChanelSerializer:
     @classmethod

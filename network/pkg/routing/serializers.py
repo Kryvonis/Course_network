@@ -1,6 +1,5 @@
 import json
 from network.pkg.routing.models import RouteTable
-from json import JSONEncoder
 
 
 class JSONRouteTableSerializer:

@@ -54,5 +54,12 @@ class NodeTestCase(TestCase):
         self.assertIsNotNone(network)
 
 
-    def test_node_add(self):
-       pass
+    def test_create_from_json_list(self):
+        net = []
+        obj = Node(0, [], [], 0, 0)
+        net.append(obj)
+        obj = Node(0, [], self.rout_table, 0, 0)
+        net.append(obj)
+        json_obj = JSONNodeSerializer.encode(net)
+        self.assertEqual(net,
+                         JSONNodeSerializer.decode(json_obj))

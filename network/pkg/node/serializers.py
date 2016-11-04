@@ -1,6 +1,5 @@
 import json
 from network.pkg.node.models import Node
-from json import JSONEncoder
 from network.pkg.routing.serializers import JSONRouteTableSerializer
 from network.pkg.chanels.serializers import JSONChanelSerializer
 

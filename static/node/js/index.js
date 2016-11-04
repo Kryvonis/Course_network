@@ -1,11 +1,37 @@
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function Generate(network) {
     var $myCanvas = $('#MainCanvas');
     var nodes = network.nodes;
     var channels = network.channels;
-
+    var csrftoken = getCookie('csrftoken');
     $myCanvas.removeLayers();
     $myCanvas.clearCanvas();
-
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
     for (var i = 0; i < channels.length; i++) {
         var first_node = channels[i].start_node_id;
         var second_node = channels[i].end_node_id;
@@ -45,6 +71,16 @@ function Generate(network) {
                     $myCanvas.getLayer(channelName).x2 = find_node(nodes, channel.end_node_id).X;
                     $myCanvas.getLayer(channelName).y2 = find_node(nodes, channel.end_node_id).Y;
                 });
+            },
+            dragstop: function(layer){
+                $.ajax({
+                        url: 'save',
+                        type: 'POST',
+                        data: JSON.stringify(network),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        async: false,
+                    });
             }
         }).drawText({
             layer: true,
@@ -55,7 +91,7 @@ function Generate(network) {
             x: nodes[i].X, y: nodes[i].Y,
             fillStyle: 'white',
             strokeStyle: 'white',
-            strokeWidth: 1
+            strokeWidth: 1,
         });
     }
 
