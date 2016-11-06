@@ -1,8 +1,8 @@
 from django.test import TestCase
 from network.pkg.node.models import Node
 from network.pkg.routing.models import RouteTable
-from network.pkg.chanels.models import Channel
-from network.pkg.chanels.serializers import JSONChanelSerializer
+from network.pkg.channels.models import Channel
+from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.routing.serializers import JSONRouteTableSerializer
 import json

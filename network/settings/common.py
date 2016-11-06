@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'network.pkg.node',
-    'network.pkg.chanels',
+    'network.pkg.channels',
 ]
 
 MIDDLEWARE = [

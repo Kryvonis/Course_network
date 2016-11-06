@@ -1,6 +1,6 @@
 from django.test import TestCase
-from network.pkg.chanels.models import Channel
-from network.pkg.chanels.serializers import JSONChanelSerializer
+from network.pkg.channels.models import Channel
+from network.pkg.channels.serializers import JSONChanelSerializer
 import json
 
 
