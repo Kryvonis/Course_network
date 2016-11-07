@@ -245,14 +245,25 @@ function remove_node() {
         async: true,
     });
 }
-
-function remove_channel() {
-    var start_node_id = document.getElementById('start_node_id').value;
-    var end_node_id = document.getElementById('end_node_id').value;
+function add_channel() {
+    var start_node_id = document.getElementById('add_start_node_id').value;
+    var end_node_id = document.getElementById('add_end_node_id').value;
     $.ajax({
-        url: 'channel/remove/'+id,
+        url: 'channel/add',
         type: 'POST',
-        data: JSON.stringify([start_node_id,end_node_id]),
+        data: JSON.stringify({'start_node_id':start_node_id,'end_node_id':end_node_id}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+}
+function remove_channel() {
+    var start_node_id = document.getElementById('remove_start_node_id').value;
+    var end_node_id = document.getElementById('remove_end_node_id').value;
+    $.ajax({
+        url: 'channel/remove',
+        type: 'POST',
+        data: JSON.stringify({'start_node_id':start_node_id,'end_node_id':end_node_id}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         async: true,

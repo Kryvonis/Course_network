@@ -1,5 +1,6 @@
-from django.shortcuts import render,reverse
+from django.shortcuts import render, reverse
 from network.pkg.node.views import network
+from django.http import HttpResponsePermanentRedirect
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_channel
 import json
@@ -13,35 +14,52 @@ def index(request):
 
 def add_channel(request):
     req = json.loads(request.body.decode('utf-8'))
-
-    print(reverse('channel:index'))
-    channel_add = generate_channel(network['channels'][-1]+1,req['start_node'],req['end_node'])
+    if channel_exitst(int(req['start_node_id']), int(req['end_node_id'])):
+        return HttpResponsePermanentRedirect(reverse('index-node'))
+    channel_add = generate_channel(int(network['channels'][-1]['id']) + 1, int(req['start_node_id']),
+                                   int(req['end_node_id']))
     network['channels'].append(channel_add)
+    for node in network['nodes']:
+        if node['id'] == int(req['start_node_id']):
+            node['channels'].append(channel_add)
+        if node['id'] == int(req['end_node_id']):
+            node['channels'].append(channel_add)
+
+    print("Add_channel")
+    for _ in network['nodes']:
+        print(_)
+    for _ in network['channels']:
+        print(_)
+
     return HttpResponsePermanentRedirect(reverse('index-node'))
 
 
-def remove_channel(request, id):
-    id = int(id)
-    tmp_node = network
-    global_channels_remove_id = []
+def channel_exitst(start_node, end_node):
+    for _channel in network['channels']:
+        if (_channel['start_node_id'] == start_node and _channel['end_node_id'] == end_node) or (
+                        _channel['start_node_id'] == end_node and _channel['end_node_id'] == start_node):
+            return True
+    return False
 
-    for node in network['nodes']:
-        channels_remove_id = []
-        if id == node['id']:
-            continue
-        for _channel in node['channels']:
-            if _channel['end_node_id'] == id or _channel['start_node_id'] == id:
-                channels_remove_id.append(_channel)
-                global_channels_remove_id.append(_channel)
-        for rm_channel in channels_remove_id:
-            node['channels'].remove(rm_channel)
-    for rm_channel in global_channels_remove_id:
-        network['channels'].remove(rm_channel)
-    # network['nodes']
-    for node in network['nodes']:
-        if id == node['id']:
-            network['nodes'].remove(node)
 
+def remove_channel(request):
+    req = json.loads(request.body.decode('utf-8'))
+    start_node_id = int(req['start_node_id'])
+    end_node_id = int(req['end_node_id'])
+    global_channels_remove_id = 0
+    if not channel_exitst(start_node_id,end_node_id):
+        return HttpResponsePermanentRedirect(reverse('index-node'))
+    for node in network['nodes']:
+        if node['id'] == start_node_id or node['id'] == end_node_id:
+            for _channel in node['channels']:
+                if (_channel['start_node_id'] == start_node_id and _channel['end_node_id'] == end_node_id) \
+                        or (_channel['start_node_id'] == end_node_id and _channel['end_node_id'] == start_node_id):
+                    global_channels_remove_id = _channel
+                    node['channels'].remove(_channel)
+                    break
+    network['channels'].remove(global_channels_remove_id)
+
+    print("REMOVE CHANNELS")
     for _ in network['nodes']:
         print(_)
     for _ in network['channels']:

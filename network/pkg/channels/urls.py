@@ -19,6 +19,6 @@ from . import views
 urlpatterns = [
     url(r'^$', view=views.index, name='index'),
     url(r'^add$', view=views.add_channel, name='add'),
-    url(r'^remove/(?P<id>[0-9])$', view=views.remove_channel, name='remove'),
+    url(r'^remove$', view=views.remove_channel, name='remove'),
 
 ]
