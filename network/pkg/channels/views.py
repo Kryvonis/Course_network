@@ -1,35 +1,26 @@
-from django.shortcuts import render, redirect,reverse
-from django.http import HttpResponse, HttpResponsePermanentRedirect
-from django.views.decorators.csrf import ensure_csrf_cookie
-from network.pkg.node.serializers import JSONNodeSerializer
+from django.shortcuts import render,reverse
+from network.pkg.node.views import network
 from network.pkg.channels.serializers import JSONChanelSerializer
-from network.pkg.node.creator import generate_randomly, generate_node
+from network.pkg.node.creator import generate_channel
 import json
 
-network = {}
-network['nodes'], network['channels'] = generate_randomly()
 
-
-@ensure_csrf_cookie
+# Create your views here.
 def index(request):
-    return render(request, 'node/index.html',
-                  context={"network": network})
+    # obj = Chanel()
+    return render(request, 'node/index.html')
 
 
-def save_pos(request):
+def add_channel(request):
     req = json.loads(request.body.decode('utf-8'))
-    network['nodes'] = req['nodes']
-    network['channels'] = req['channels']
-    return HttpResponse(200)
 
-
-def add_node(request):
-    print(reverse('index-node'))
-    network['nodes'].append(generate_node((network['nodes'][-1]['id'] + 1)))
+    print(reverse('channel:index'))
+    channel_add = generate_channel(network['channels'][-1]+1,req['start_node'],req['end_node'])
+    network['channels'].append(channel_add)
     return HttpResponsePermanentRedirect(reverse('index-node'))
 
 
-def remove_node(request, id):
+def remove_channel(request, id):
     id = int(id)
     tmp_node = network
     global_channels_remove_id = []

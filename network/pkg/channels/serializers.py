@@ -1,4 +1,4 @@
-from network.pkg.chanels.models import Channel
+from network.pkg.channels.models import Channel
 import json
 
 class JSONChanelSerializer:

@@ -18,7 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('network.pkg.node.urls')),
-    url(r'^chanel/', include('network.pkg.chanels.urls')),
+    url(r'^', include('network.pkg.node.urls'), name='nodes'),
+    url(r'^channel/', include('network.pkg.channels.urls'), name='channels'),
 
 ]
