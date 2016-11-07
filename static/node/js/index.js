@@ -63,7 +63,7 @@ function Generate(local_net){
                 dragGroups: ["channel_and_text" + i],
                 strokeStyle: "black",
                 strokeWidth: 2,
-                draggable: true,
+                draggable: false,
                 x1: find_node(nodes, first_node).X, y1: find_node(nodes, first_node).Y,
                 x2: find_node(nodes, second_node).X, y2: find_node(nodes, second_node).Y,
                 // contextmenu: function (layer) {
@@ -240,6 +240,19 @@ function remove_node() {
         url: 'node/remove/'+id,
         type: 'POST',
         data: JSON.stringify(id),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+}
+
+function remove_channel() {
+    var start_node_id = document.getElementById('start_node_id').value;
+    var end_node_id = document.getElementById('end_node_id').value;
+    $.ajax({
+        url: 'channel/remove/'+id,
+        type: 'POST',
+        data: JSON.stringify([start_node_id,end_node_id]),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         async: true,
