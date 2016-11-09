@@ -39,18 +39,6 @@ class ChanelTestCase(TestCase):
                Channel(1, 0, 0, 1, 'Duplex')]
         self.assertIsNotNone(obj)
 
-    def test_list_correct_parameters(self):
-        obj = [Channel(0, 0, 0, 1, 'Duplex'),
-               Channel(1, 0, 0, 1, 'Duplex')]
-        for i, _ in enumerate(obj):
-            self.assertDictEqual(_.__dict__,
-                                 {'id': i,
-                                  'weight': 0,
-                                  'start_node_id': 0,
-                                  'end_node_id': 1,
-                                  'type': 'Duplex',
-                                  })
-
     def test_list_correct_json(self):
         obj = [Channel(0, 0, 0, 1, 'Duplex'),
                Channel(1, 0, 0, 1, 'Duplex')]
@@ -67,9 +55,7 @@ class ChanelTestCase(TestCase):
                            'end_node_id': 1,
                            'type': 'Duplex',
                            },
-                          ]
-
-                         )
+                          ])
 
     def test_list_create_from_json(self):
         obj = [Channel(0, 0, 0, 1, 'Duplex'),

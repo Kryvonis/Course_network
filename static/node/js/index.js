@@ -72,9 +72,9 @@ function Generate(local_net){
                     var channel = find_channel(channels, node_1, node_2);
                     var modal_window = $('#modal_form');
 
-                    modal_window.find('#weight').val(channel.weight);
-                    modal_window.find('#error_prob').val(channel.error_prob);
-                    modal_window.find('#type').val(channel.type);
+                    modal_window.find('#weight').text(channel.weight);
+                    modal_window.find('#error_prob').text(channel.error_prob);
+                    modal_window.find('#type').text(channel.type);
                     $('#overlay').fadeIn(100, function() {
                      $('#modal_form')
                          .css('display', 'block')

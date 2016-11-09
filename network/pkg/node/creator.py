@@ -9,14 +9,18 @@ import math
 weights = (1, 2, 3, 4, 5, 6, 7)
 
 
-def generate_randomly():
+def generate_randomly(num,avg_channels_num,):
     """
     Create random network
     :return: network,nodes,channels
     """
+    # avg_channels_num*nodes_num/2
+    # avg_channels_num*nodes_num % 2 ==0 !!!
+
     channels = []
     # n*(n+1)/2 = 4 * 3 / 2 = 6
     # Максимальное количество каналов это количетсво вершин(num_of_nodes) + sum(num_of_nodes_2 -> 2)
+
     nodes = []
     i = 0
     j = 0
