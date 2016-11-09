@@ -1,12 +1,13 @@
 # from django.db import models
 # Create your models here.
-
+import random
 
 class Channel:
     def __init__(self, id, weight, start_node_id, end_node_id, type='Duplex'):
         self.id = id
         self.weight = weight
         self.type = type
+        self.error_prob = random.random()*0.01
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
 

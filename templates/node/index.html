@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="utf-8">
     <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +17,7 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <!-- Latest compiled and minified JavaScript -->
-
+    <link rel="stylesheet" href="{% static 'node/css/index.css' %}">
 </head>
 <body onload="Generate({{network}})">
 <div>
@@ -115,12 +116,20 @@
         </div>
     </div>
 </div>
-
-
+<div id="modal_form">
+    <span id="modal_close">X</span>
+    <label>Weight</label>
+    <p id="weight"></p>
+    <label>Error Prob</label>
+    <p id="error_prob"></p>
+    <label>Channel Type</label>
+    <p id="type"></p>
+</div>
+<div id="overlay"></div><!-- Пoдлoжкa -->
+<canvas id="MainCanvas" width="2000" height="1000"></canvas>
 </body>
 
-{% load static %}
-<canvas id="MainCanvas" width="2000" height="1000"></canvas>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="{% static 'node/js/index.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/16.7.3/jcanvas.min.js"></script>
