@@ -217,6 +217,41 @@ function remove_channel() {
         async: true,
     });
 }
+function regenerate() {
+    var average_nums_id = document.getElementById('average_nums_id').value;
+    var node_nums_id = document.getElementById('node_nums_id').value;
+    $.ajax({
+        url: 'regenerate',
+        type: 'POST',
+        data: JSON.stringify({'average_nums':average_nums_id,'node_nums':node_nums_id}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+    location.reload();
+}
+function save_nodes() {
+    $.ajax({
+        url: 'jsonsave',
+        type: 'POST',
+        data: JSON.stringify({'filename':"dump.json"}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+    location.reload();
+}
+function load_nodes() {
+    $.ajax({
+        url: 'load',
+        type: 'POST',
+        data: JSON.stringify({'filename':"dump.json"}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+    location.reload();
+}
 
 $(document).ready(function() {
 //    var network = $('#network').data('networkObj');

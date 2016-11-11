@@ -6,91 +6,110 @@ from network.pkg.channels.serializers import JSONChanelSerializer
 import random
 import math
 
-weights = (1, 2, 3, 4, 5, 6, 7)
+
+def is_avg_ok(nodes_num, avg_channels_num, channels_num):
+    return channels_num <= avg_channels_num * nodes_num / 2
 
 
-def generate_randomly(num,avg_channels_num,):
+def generate_randomly(num, avg_channels_num):
     """
     Create random network
     :return: network,nodes,channels
     """
-    # avg_channels_num*nodes_num/2
-    # avg_channels_num*nodes_num % 2 ==0 !!!
-
-    channels = []
-    # n*(n+1)/2 = 4 * 3 / 2 = 6
-    # Максимальное количество каналов это количетсво вершин(num_of_nodes) + sum(num_of_nodes_2 -> 2)
-
+    max_channels = int(int(num / 2) * (int(num / 2) - 1) / 2)
     nodes = []
     i = 0
     j = 0
-    ##
-    # TEST
-    ##
-
-    # for id in range(3):
-    #     nodes.append(Node(id, [], [], 120 * i + 50, 120 * j + 50))
-    #     i += 1
-    #     if i == 4:
-    #         j += 1
-    #         i = 0
-    #
-    # for i in range(3):
-    #     channel = Channel(id=i,
-    #                         weight = weights[random.randint(0, len(weights) - 1)],
-    #                         type = 'Duplex', start_node_id = i,
-    #                         end_node_id = ((i + 1) % 3))
-    #     channels.append(channel)
-    #     nodes[i].channels.append(channel)
-    #     nodes[(i + 1) % 3].channels.append(channel)
-    #
-
-    ##
-    # PROD
-    ##
-
-    for id in range(12):
-        nodes.append(Node(id, [], [], 120 * i + 50, 120 * j + 50))
+    must_be_channels_num = int((avg_channels_num * num / 2) / 2)
+    if (avg_channels_num * num % 2 != 0) or (must_be_channels_num > max_channels):
+        raise ValueError
+    one_channels = []
+    two_channels = []
+    for id in range(int(num / 2)):
+        nodes.append(Node(id, [], [], 130 * i + 50, 130 * j + 50))
         i += 1
         if i == 4:
             j += 1
             i = 0
-    for i in range(12):
+    for i in range(int(num / 2)):
         channel = Channel(id=i,
-                          weight=weights[random.randint(0, len(weights) - 1)],
-                          type='Duplex', start_node_id=i,
-                          end_node_id=((i + 1) % 12))
-        channels.append(channel)
-        nodes[i].channels.append(channel)
-        nodes[(i + 1) % 12].channels.append(channel)
+                          start_node_id=i,
+                          end_node_id=((i + 1) % int(num / 2)),
+                          type='Duplex', )
+        one_channels.append(channel)
+        nodes[channel.start_node_id].channels.append(channel)
+        nodes[channel.end_node_id].channels.append(channel)
     i = 0
     j = 0
-    for id in range(12, 24):
-        nodes.append(Node(id, [], [], 120 * i + 600, 120 * j + 50))
+
+    for id in range(int(num / 2), int(num)):
+        nodes.append(Node(id, [], [], 130 * i + 800, 130 * j + 50))
         i += 1
         if i == 4:
             j += 1
             i = 0
 
-    for i in range(12, 24):
+    for i in range(int(num / 2), int(num)):
         channel = Channel(id=i,
-                          weight=weights[random.randint(0, len(weights) - 1)],
-                          type='Duplex', start_node_id=i,
-                          end_node_id=((i + 1) % 24))
-        channels.append(channel)
-        nodes[i].channels.append(channel)
-        nodes[(i + 1) % 24].channels.append(channel)
+                          type='Duplex',
+                          start_node_id=i,
+                          end_node_id=(int(num / 2) if (i + 1) % int(num) == 0 else (i + 1)))
+        two_channels.append(channel)
+        nodes[channel.start_node_id].channels.append(channel)
+        nodes[channel.end_node_id].channels.append(channel)
 
-    return JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)
+    i = two_channels[-1].id
+
+    while len(one_channels) < must_be_channels_num:
+        channel = Channel(id=i,
+                          type='Duplex',
+                          start_node_id=random.randint(0, (int(num / 2) - 1)),
+                          end_node_id=random.randint(0, (int(num / 2) - 1))
+                          )
+
+        if not find_channel(one_channels, channel.start_node_id, channel.end_node_id):
+            one_channels.append(channel)
+            nodes[channel.start_node_id].channels.append(channel)
+            nodes[channel.end_node_id].channels.append(channel)
+            i += 1
+
+    while len(two_channels) < must_be_channels_num:
+        channel = Channel(id=i,
+                          type='Duplex',
+                          start_node_id=random.randint(int(num / 2), (int(num) - 1)),
+                          end_node_id=random.randint(int(num / 2), (int(num) - 1))
+                          )
+        if not find_channel(two_channels, channel.start_node_id, channel.end_node_id):
+            two_channels.append(channel)
+            nodes[channel.start_node_id].channels.append(channel)
+            nodes[channel.end_node_id].channels.append(channel)
+            i += 1
+    channel = Channel(id=i + 1,
+                      type='Duplex',
+                      start_node_id=0,
+                      end_node_id=num - 1
+                      )
+    two_channels.append(channel)
+    nodes[channel.start_node_id].channels.append(channel)
+    nodes[channel.end_node_id].channels.append(channel)
+    return JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(one_channels + two_channels)
 
 
 def generate_node(id):
     return JSONNodeSerializer.encode(Node(id, [], [], 120 * id / 12, 120 * id / 12 + 50))
 
 
-def generate_channel(id,start_node,end_node):
+def generate_channel(id, start_node, end_node):
     return JSONChanelSerializer.encode(Channel(id=id,
-                                               weight=weights[random.randint(0, len(weights) - 1)],
                                                type='Duplex',
                                                start_node_id=start_node,
                                                end_node_id=end_node))
+
+
+def find_channel(channels, start_node, end_node):
+    for i in channels:
+        if (i.start_node_id == start_node and i.end_node_id == end_node) or \
+                (i.start_node_id == end_node and i.end_node_id == start_node) or \
+                (start_node == end_node):
+            return True
+    return False

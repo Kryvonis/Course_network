@@ -26,93 +26,163 @@
         <button type="button" class="btn btn-success" onclick="add_node()">Add Node</button>
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#NodeModal">
-          Remove Node
+            Remove Node
         </button>
 
         <!-- Modal -->
         <div class="modal fade" id="NodeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="NodeModalLabel">Remove node</h4>
-              </div>
-              <div class="modal-body">
-                <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon1">id</span>
-                  <input id="remove_node_id" type="text" class="form-control" placeholder="id" aria-describedby="basic-addon1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="NodeModalLabel">Remove node</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">id</span>
+                            <input id="remove_node_id" type="text" class="form-control" placeholder="id"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" onclick="remove_node()">Remove</button>
+                    </div>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" onclick="remove_node()">Remove</button>
-              </div>
             </div>
-          </div>
+        </div>
+
+        <!--REGENERATE-->
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#RegenerateModal">
+            Regenerate Nodes
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="RegenerateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="RegenerateModalLabel">Regenerate Nodes</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="node_nums">num</span>
+                            <input id="node_nums_id" type="text" class="form-control" placeholder="num"
+                                   aria-describedby="basic-addon1">
+                            <span class="input-group-addon" id="average_nums">average num</span>
+                            <input id="average_nums_id" type="text" class="form-control" placeholder="average num"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" onclick="regenerate()">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--SAVE-->
+        <button type="button" class="btn btn-success" onclick="save_nodes()">Save Node</button>
+        <!--LOAD-->
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#SaveNodesModal">
+            Load Nodes
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="SaveNodesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="SaveModalLabel">Save Nodes</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="load_nodes">file</span>
+                            <input id="load_nodes_id" type="text" class="form-control" placeholder="num"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" onclick="load_nodes()">Load</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!--CHANNELS-->
     <div>
         <!-- Button ADD CHANNEL -->
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_channel_modal">
-          Add Channel
+            Add Channel
         </button>
 
         <!-- Modal -->
         <div class="modal fade" id="add_channel_modal" tabindex="-1" role="dialog" aria-labelledby="Add_channel_label">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="Add_channel_label">Add channel</h4>
-              </div>
-              <div class="modal-body">
-                <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon4">begin_node</span>
-                  <input id="add_start_node_id" type="text" class="form-control" placeholder="id" aria-describedby="basic-addon1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="Add_channel_label">Add channel</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon4">begin_node</span>
+                            <input id="add_start_node_id" type="text" class="form-control" placeholder="id"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon5">end_node</span>
+                            <input id="add_end_node_id" type="text" class="form-control" placeholder="id"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" onclick="add_channel()">Add</button>
+                    </div>
                 </div>
-              <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon5">end_node</span>
-                  <input id="add_end_node_id" type="text" class="form-control" placeholder="id" aria-describedby="basic-addon1">
-              </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" onclick="add_channel()">Add</button>
-              </div>
             </div>
-          </div>
         </div>
 
         <!-- Button Remove CHANNEL -->
         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
-          Remove Channel
+            Remove Channel
         </button>
 
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Remove channel</h4>
-              </div>
-              <div class="modal-body">
-                <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon2">begin_node</span>
-                  <input id="remove_start_node_id" type="text" class="form-control" placeholder="id" aria-describedby="basic-addon1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Remove channel</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">begin_node</span>
+                            <input id="remove_start_node_id" type="text" class="form-control" placeholder="id"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">end_node</span>
+                            <input id="remove_end_node_id" type="text" class="form-control" placeholder="id"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" onclick="remove_channel()">Remove</button>
+                    </div>
                 </div>
-              <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon3">end_node</span>
-                  <input id="remove_end_node_id" type="text" class="form-control" placeholder="id" aria-describedby="basic-addon1">
-              </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" onclick="remove_channel()">Remove</button>
-              </div>
             </div>
-          </div>
         </div>
     </div>
 </div>

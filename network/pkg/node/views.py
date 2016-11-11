@@ -1,13 +1,15 @@
-from django.shortcuts import render, redirect,reverse
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.conf import settings
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_randomly, generate_node
 import json
+import os
 
 network = {}
-network['nodes'], network['channels'] = generate_randomly()
+network['nodes'], network['channels'] = generate_randomly(8, 2)
 
 
 @ensure_csrf_cookie
@@ -26,12 +28,32 @@ def save_pos(request):
 def add_node(request):
     print(reverse('index-node'))
     network['nodes'].append(generate_node((network['nodes'][-1]['id'] + 1)))
-    return HttpResponsePermanentRedirect(reverse('index-node'))
+    return HttpResponse(200)
+
+
+def regenerate(request):
+    req = json.loads(request.body.decode('utf-8'))
+    network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
+    return HttpResponse(200)
+
+
+def save(request):
+    req = json.loads(request.body.decode('utf-8'))
+    with open(os.path.join(settings.BASE_DIR, req['filename']), 'w') as f:
+        json.dump(network, f)
+    return HttpResponse(200)
+
+
+def load(request):
+    req = json.loads(request.body.decode('utf-8'))
+    with open(os.path.join(settings.BASE_DIR, req['filename']), 'r') as f:
+        load_dump = json.load(f)
+        network['nodes'], network['channels'] = load_dump['nodes'], load_dump['channels']
+    return HttpResponse(200)
 
 
 def remove_node(request, id):
     id = int(id)
-    tmp_node = network
     global_channels_remove_id = []
 
     for node in network['nodes']:
@@ -56,4 +78,4 @@ def remove_node(request, id):
     for _ in network['channels']:
         print(_)
 
-    return HttpResponsePermanentRedirect(reverse('index-node'))
+    return HttpResponse(204)

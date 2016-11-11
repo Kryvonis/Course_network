@@ -2,12 +2,15 @@
 # Create your models here.
 import random
 
+weights = (1, 2, 3, 4, 5, 6, 7)
+
+
 class Channel:
-    def __init__(self, id, weight, start_node_id, end_node_id, type='Duplex'):
+    def __init__(self, id, start_node_id, end_node_id, type='Duplex'):
         self.id = id
-        self.weight = weight
+        self.weight = weights[random.randint(0, len(weights) - 1)]
         self.type = type
-        self.error_prob = random.random()*0.01
+        self.error_prob = random.random() * 0.01
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
 
