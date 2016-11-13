@@ -16,25 +16,26 @@ def generate_randomly(num, avg_channels_num):
     Create random network
     :return: network,nodes,channels
     """
-    max_channels = int(int(num / 2) * (int(num / 2) - 1) / 2)
+    max_channels = int(int(num) * (int(num) - 1) / 2)
     nodes = []
     i = 0
     j = 0
-    must_be_channels_num = int((avg_channels_num * num / 2) / 2)
-    if (avg_channels_num * num % 2 != 0) or (must_be_channels_num > max_channels):
+    must_be_channels_num = int((avg_channels_num * num) / 2)
+    if (avg_channels_num * num % 2 != 0) or (must_be_channels_num > max_channels) or (num > 40):
         raise ValueError
     one_channels = []
     two_channels = []
-    for id in range(int(num / 2)):
-        nodes.append(Node(id, [], [], 130 * i + 50, 130 * j + 50))
+
+    for id in range(int(num)):
+        nodes.append(Node(id, [], [], 130 * i + 50, 130 * j + 50, address="0.{}".format(id)))
         i += 1
         if i == 4:
             j += 1
             i = 0
-    for i in range(int(num / 2)):
+    for i in range(int(num)):
         channel = Channel(id=i,
                           start_node_id=i,
-                          end_node_id=((i + 1) % int(num / 2)),
+                          end_node_id=((i + 1) % int(num)),
                           type='Duplex', )
         one_channels.append(channel)
         nodes[channel.start_node_id].channels.append(channel)
@@ -42,18 +43,18 @@ def generate_randomly(num, avg_channels_num):
     i = 0
     j = 0
 
-    for id in range(int(num / 2), int(num)):
-        nodes.append(Node(id, [], [], 130 * i + 800, 130 * j + 50))
+    for id in range(int(num), int(num*2)):
+        nodes.append(Node(id, [], [], 130 * i + 800, 130 * j + 50,address="1.{}".format(int(id % num))))
         i += 1
         if i == 4:
             j += 1
             i = 0
 
-    for i in range(int(num / 2), int(num)):
+    for i in range(int(num), int(num*2)):
         channel = Channel(id=i,
                           type='Duplex',
                           start_node_id=i,
-                          end_node_id=(int(num / 2) if (i + 1) % int(num) == 0 else (i + 1)))
+                          end_node_id=(int(num) if (i + 1) % int(num*2) == 0 else (i + 1)))
         two_channels.append(channel)
         nodes[channel.start_node_id].channels.append(channel)
         nodes[channel.end_node_id].channels.append(channel)
@@ -63,8 +64,8 @@ def generate_randomly(num, avg_channels_num):
     while len(one_channels) < must_be_channels_num:
         channel = Channel(id=i,
                           type='Duplex',
-                          start_node_id=random.randint(0, (int(num / 2) - 1)),
-                          end_node_id=random.randint(0, (int(num / 2) - 1))
+                          start_node_id=random.randint(0, (int(num) - 1)),
+                          end_node_id=random.randint(0, (int(num) - 1))
                           )
 
         if not find_channel(one_channels, channel.start_node_id, channel.end_node_id):
@@ -76,8 +77,8 @@ def generate_randomly(num, avg_channels_num):
     while len(two_channels) < must_be_channels_num:
         channel = Channel(id=i,
                           type='Duplex',
-                          start_node_id=random.randint(int(num / 2), (int(num) - 1)),
-                          end_node_id=random.randint(int(num / 2), (int(num) - 1))
+                          start_node_id=20 + random.randint(int(num), (int(num*2) - 1)),
+                          end_node_id=20 + random.randint(int(num), (int(num*2) - 1))
                           )
         if not find_channel(two_channels, channel.start_node_id, channel.end_node_id):
             two_channels.append(channel)
@@ -87,16 +88,16 @@ def generate_randomly(num, avg_channels_num):
     channel = Channel(id=i + 1,
                       type='Duplex',
                       start_node_id=0,
-                      end_node_id=num - 1
+                      end_node_id=num
                       )
     two_channels.append(channel)
     nodes[channel.start_node_id].channels.append(channel)
     nodes[channel.end_node_id].channels.append(channel)
-    return JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(one_channels + two_channels)
+    return nodes, one_channels + two_channels
 
 
-def generate_node(id):
-    return JSONNodeSerializer.encode(Node(id, [], [], 120 * id / 12, 120 * id / 12 + 50))
+def generate_node(id,address):
+    return JSONNodeSerializer.encode(Node(id, [], [], 120 * id / 12, 120 * id / 12 + 50,address=address))
 
 
 def generate_channel(id, start_node, end_node):

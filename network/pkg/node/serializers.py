@@ -13,6 +13,7 @@ class JSONNodeSerializer:
                     'X': o.X,
                     'Y': o.Y,
                     'channels': JSONChanelSerializer.encode(o.channels),
+                    'address': o.address,
                     }
             return attr
         if isinstance(o, list):
@@ -26,7 +27,7 @@ class JSONNodeSerializer:
         if isinstance(o, dict):
             table = JSONRouteTableSerializer.decode(o['table'])
             channels = JSONChanelSerializer.decode(o['channels'])
-            return Node(o['id'], channels, table, o['X'], o['Y'])
+            return Node(o['id'], channels, table, o['X'], o['Y'], address=o['address'])
         if isinstance(o, list):
             nodes = []
             for item in o:

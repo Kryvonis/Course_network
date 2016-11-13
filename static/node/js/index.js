@@ -128,7 +128,7 @@ function Generate(local_net){
             }).drawText({
                 layer: true,
                 groups: ["node_and_text" + i],
-                text: nodes[i].id,
+                text: nodes[i].address,
                 fontSize: 20,
                 name: "node_number" + i,
                 x: nodes[i].X, y: nodes[i].Y,

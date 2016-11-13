@@ -5,12 +5,14 @@ from django.conf import settings
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.creator import generate_randomly, generate_node
+from network.pkg.routing.finder import initialize
 import json
 import os
 
 network = {}
-network['nodes'], network['channels'] = generate_randomly(8, 2)
-
+# nodes,channels = generate_randomly(8, 2)
+# network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes),JSONChanelSerializer.encode(channels)
+# create_rounting_table(nodes)
 
 @ensure_csrf_cookie
 def index(request):

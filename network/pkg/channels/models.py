@@ -2,7 +2,7 @@
 # Create your models here.
 import random
 
-weights = (1, 2, 3, 4, 5, 6, 7)
+weights = (1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27, 28)
 
 
 class Channel:
