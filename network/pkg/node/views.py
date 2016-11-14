@@ -10,9 +10,9 @@ import json
 import os
 
 network = {}
-# nodes,channels = generate_randomly(8, 2)
-# network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes),JSONChanelSerializer.encode(channels)
-# create_rounting_table(nodes)
+nodes,channels = generate_randomly(8, 2)
+initialize(nodes)
+network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes),JSONChanelSerializer.encode(channels)
 
 @ensure_csrf_cookie
 def index(request):

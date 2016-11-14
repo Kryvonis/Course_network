@@ -10,7 +10,7 @@ class Channel:
         self.id = id
         self.weight = weights[random.randint(0, len(weights) - 1)]
         self.type = type
-        self.error_prob = random.random() * 0.01
+        self.error_prob = random.random()
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
 

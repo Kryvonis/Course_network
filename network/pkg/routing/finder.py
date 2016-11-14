@@ -75,10 +75,11 @@ def initialize(network):
         if node.address.split('.')[0] == '0':
             region1.append(node)
         if node.address.split('.')[0] == '1':
-            region1.append(node)
-    print(region1)
-    # for node in region1:
-    #     dijkstra(region1,node.id)
+            region2.append(node)
+    for node in region1:
+        dijkstra(region1,node.id)
+    for node in region2:
+        dijkstra(region2,node.id)
     network = region1 + region2
     # print(network)
 

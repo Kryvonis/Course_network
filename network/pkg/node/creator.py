@@ -7,8 +7,8 @@ import random
 import math
 
 
-def is_avg_ok(nodes_num, avg_channels_num, channels_num):
-    return channels_num <= avg_channels_num * nodes_num / 2
+# def is_avg_ok(nodes_num, avg_channels_num, channels_num):
+#     return channels_num <= avg_channels_num * nodes_num / 2
 
 
 def generate_randomly(num, avg_channels_num):
