@@ -110,8 +110,9 @@ function Generate(local_net){
                     var node_id = layer.name.match(/\d+/g)[0];
                     var node = find_node(nodes, node_id);
                     modal_window.find('#id_node').text(node.id);
-                    modal_window.find('#table_node').text(node.table);
-                    modal_window.find('#address_node').text(node.address.metric);
+                    modal_window.find('#table_node').text(JSON.stringify(node.table.metric,null,4));
+                    modal_window.find('#table_node_path').text(JSON.stringify(node.table.path,null,4));
+                    modal_window.find('#address_node').text(node.address);
                     $('#overlay_node').fadeIn(100, function() {
                      $('#modal_form_node')
                          .css('display', 'block')
