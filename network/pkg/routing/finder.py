@@ -1,6 +1,8 @@
 from network.pkg.node.creator import generate_randomly
 from network.pkg.routing.models import RouteTable
 from network.pkg.node.models import Node
+from network.pkg.node.finder import find_node, find_node_by_address
+from network.pkg.channels.finder import find_channel, channel_exist
 from network.pkg.channels.models import Channel
 from math import inf
 import random
@@ -18,7 +20,7 @@ def dijkstra(nodes, concrete_node, network):
         neibor_path[find_node(node.id, network).address] = '{}'.format(find_node(concrete_node, network).address)
     nodes_weight[conc_node.address] = 0
 
-    for i in range(len(nodes)):
+    for i in range(len(nodes) - 1):
 
         # print('node id = {}'.format(node_i))
         # neibors = []
@@ -71,77 +73,47 @@ def dijkstra(nodes, concrete_node, network):
 def initialize(network):
     region1 = []
     region2 = []
+    main_node_1 = 0
+    main_node_2 = 1
     for node in network:
-        ad = node.address.split('.')[0]
         if node.address.split('.')[0] == '0':
+            if node.address.split('.')[1] == '0':
+                main_node_1 = node
             region1.append(node)
         if node.address.split('.')[0] == '1':
+            if node.address.split('.')[1] == '0':
+                main_node_2 = node
             region2.append(node)
+    main_channel = find_channel(main_node_1.channels, main_node_1.id, main_node_2.id)
+    t = region1[region1.index(main_node_1)].channels
+    t.pop(t.index(main_channel))
+
+    t = region2[region2.index(main_node_2)].channels
+    t.pop(t.index(main_channel))
     for node in region1:
+        if node.address == '0.0':
+            continue
         dijkstra(region1, node.id, network)
     for node in region2:
+        if node.address == '1.0':
+            continue
         dijkstra(region2, node.id, network)
+    t = region2[region2.index(main_node_2)].channels
+    t.append(main_channel)
+
+    t = region1[region1.index(main_node_1)].channels
+    t.append(main_channel)
+
+    dijkstra(region1, main_node_1.id, network)
+    dijkstra(region2, main_node_2.id, network)
     network = region1 + region2
     # print(network)
-
-
-def find_node(id, network):
-    for i in network:
-        if i.id == id:
-            return i
-    return None
-
-
-def find_node_by_address(addr, network):
-    for i in network:
-        if i.address == addr:
-            return i
-    return None
-
-
-def if_channel_exist(channels, start_node, end_node):
-    for i in channels:
-        if (i.start_node_id == start_node and i.end_node_id == end_node) or \
-                (i.start_node_id == end_node and i.end_node_id == start_node) or \
-                (start_node == end_node):
-            return True
-    return False
 
 
 if __name__ == '__main__':
     channels = []
     network = []
-    i = 0
-    j = 0
-    for id in range(5):
-        network.append(Node(id, [], [], 130 * i + 50, 130 * j + 50, address="0.{}".format(id)))
-        i += 1
-        if i == 4:
-            j += 1
-            i = 0
-    for i in range(5):
-        channel = Channel(id=i,
-                          start_node_id=i,
-                          end_node_id=((i + 1) % 5),
-                          type='Duplex', )
-        channels.append(channel)
-        network[channel.start_node_id].channels.append(channel)
-        network[channel.end_node_id].channels.append(channel)
-    for i in range(1000):
-        channel = Channel(id=i,
-                          type='Duplex',
-                          start_node_id=random.randint(0, (int(5) - 1)),
-                          end_node_id=random.randint(0, (int(5) - 1))
-                          )
 
-    if not if_channel_exist(channels, channel.start_node_id, channel.end_node_id):
-        channels.append(channel)
-        network[channel.start_node_id].channels.append(channel)
-        network[channel.end_node_id].channels.append(channel)
-        i += 1
     network, _ = generate_randomly(3, 2)
     # dijkstra(network,0)
     initialize(network)
-    print()
-    print()
-    print(network)
