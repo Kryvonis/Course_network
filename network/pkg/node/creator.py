@@ -7,8 +7,8 @@ import random
 import math
 
 
-def is_avg_ok(nodes_num, avg_channels_num, channels_num):
-    return channels_num <= avg_channels_num * nodes_num / 2
+# def is_avg_ok(nodes_num, avg_channels_num, channels_num):
+#     return channels_num <= avg_channels_num * nodes_num / 2
 
 
 def generate_randomly(num, avg_channels_num):
@@ -77,8 +77,8 @@ def generate_randomly(num, avg_channels_num):
     while len(two_channels) < must_be_channels_num:
         channel = Channel(id=i,
                           type='Duplex',
-                          start_node_id=20 + random.randint(int(num), (int(num*2) - 1)),
-                          end_node_id=20 + random.randint(int(num), (int(num*2) - 1))
+                          start_node_id=random.randint(int(num), (int(num*2) - 1)),
+                          end_node_id=random.randint(int(num), (int(num*2) - 1))
                           )
         if not find_channel(two_channels, channel.start_node_id, channel.end_node_id):
             two_channels.append(channel)
