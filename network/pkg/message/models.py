@@ -24,6 +24,19 @@ class Message:
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
+    def __str__(self):
+        return 'from_node:{};\n' \
+               'to_node:{};\n' \
+               'type_message:{};\n' \
+               'info_size:{};\n' \
+               'service_size:{};\n'.format(self.from_node, self.to_node,
+                                          self.type_message, self.info_size,
+                                          self.service_size)
+
+        # def __repr__(self):
+        #     return '{};{};{};{};{};'.format(self.from_node, self.to_node, self.type_message, self.info_size,
+        #                                     self.service_size)
+
 
 if __name__ == '__main__':
     m1 = Message(0, 0, 0, 0, 0, 0)

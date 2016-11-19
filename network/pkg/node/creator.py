@@ -30,7 +30,7 @@ def generate_randomly(num, avg_channels_num):
         channel = Channel(id=i,
                           start_node_id=i,
                           end_node_id=((i + 1) % int(num)),
-                          type='Duplex', )
+                          type='duplex', )
         one_channels.append(channel)
         nodes[channel.start_node_id].channels.append(channel)
         nodes[channel.end_node_id].channels.append(channel)
@@ -46,7 +46,7 @@ def generate_randomly(num, avg_channels_num):
 
     for i in range(int(num), int(num * 2 - 1)):
         channel = Channel(id=i,
-                          type='Duplex',
+                          type='duplex',
                           start_node_id=i,
                           end_node_id=(int(num) if (i + 1) % int(num * 2) == 0 else (i + 1)))
         two_channels.append(channel)
@@ -57,7 +57,7 @@ def generate_randomly(num, avg_channels_num):
 
     while len(one_channels) < must_be_channels_num:
         channel = Channel(id=i,
-                          type='Duplex',
+                          type='duplex',
                           start_node_id=random.randint(0, (int(num) - 1)),
                           end_node_id=random.randint(0, (int(num) - 1))
                           )
@@ -70,7 +70,7 @@ def generate_randomly(num, avg_channels_num):
 
     while len(two_channels) < must_be_channels_num:
         channel = Channel(id=i,
-                          type='Duplex',
+                          type='duplex',
                           start_node_id=random.randint(int(num), (int(num * 2) - 1)),
                           end_node_id=random.randint(int(num), (int(num * 2) - 1))
                           )
@@ -80,7 +80,7 @@ def generate_randomly(num, avg_channels_num):
             nodes[channel.end_node_id].channels.append(channel)
             i += 1
     channel = Channel(id=i + 1,
-                      type='Duplex',
+                      type='duplex',
                       start_node_id=0,
                       end_node_id=num
                       )
