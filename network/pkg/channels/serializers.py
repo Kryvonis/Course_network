@@ -1,23 +1,24 @@
 from network.pkg.channels.models import Channel
 import json
 
+
 class JSONChanelSerializer:
     @classmethod
     def encode(cls, obj):
         if isinstance(obj, list):
-            chanels = []
+            channels = []
             for o in obj:
-                chanels.append(o.__dict__)
-            return chanels
+                channels.append(o.__dict__)
+            return channels
         if isinstance(obj, Channel):
             return obj.__dict__
 
     @classmethod
     def decode(cls, ojb):
         if isinstance(ojb, list):
-            chanels = []
+            channels = []
             for o in ojb:
-                chanels.append(Channel(**o))
-            return chanels
+                channels.append(Channel(**o))
+            return channels
         if isinstance(ojb, dict):
             return Channel(**ojb)

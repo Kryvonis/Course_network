@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
     'network.pkg.node',
     'network.pkg.channels',
+    'network.pkg.routing',
+    'network.pkg.message',
 ]
 
 MIDDLEWARE = [

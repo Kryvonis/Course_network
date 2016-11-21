@@ -26,3 +26,4 @@ class Node:
         if args[0].__dict__ != self.__dict__:
             return False
         return True
+

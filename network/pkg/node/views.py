@@ -2,17 +2,20 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
+
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
+from network.pkg.channels.creator import generate_channel
 from network.pkg.node.creator import generate_randomly, generate_node
 from network.pkg.routing.finder import initialize
 import json
 import os
 
 network = {}
-nodes,channels = generate_randomly(8, 2)
+nodes, channels = generate_randomly(8, 2)
 initialize(nodes)
-network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes),JSONChanelSerializer.encode(channels)
+network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)
+
 
 @ensure_csrf_cookie
 def index(request):
@@ -35,7 +38,7 @@ def add_node(request):
 
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
-    nodes,channels = generate_randomly(int(req['node_nums']), int(req['average_nums']))
+    nodes, channels = generate_randomly(int(req['node_nums']), int(req['average_nums']))
     initialize(nodes)
     network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)
     return HttpResponse(200)
@@ -76,10 +79,5 @@ def remove_node(request, id):
     for node in network['nodes']:
         if id == node['id']:
             network['nodes'].remove(node)
-
-    for _ in network['nodes']:
-        print(_)
-    for _ in network['channels']:
-        print(_)
 
     return HttpResponse(204)
