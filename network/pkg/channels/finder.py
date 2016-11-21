@@ -1,4 +1,3 @@
-
 def find_channel(channels, start_node, end_node):
     for i in channels:
         if (i.start_node_id == start_node and i.end_node_id == end_node) or \

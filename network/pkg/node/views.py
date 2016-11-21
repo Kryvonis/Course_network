@@ -31,8 +31,9 @@ def save_pos(request):
 
 
 def add_node(request):
+    req = json.loads(request.body.decode('utf-8'))
     print(reverse('index-node'))
-    network['nodes'].append(generate_node((network['nodes'][-1]['id'] + 1)))
+    network['nodes'].append(generate_node((network['nodes'][-1]['id'] + 1), req['address']))
     return HttpResponse(200)
 
 

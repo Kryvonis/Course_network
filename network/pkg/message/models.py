@@ -30,8 +30,8 @@ class Message:
                'type_message:{};\n' \
                'info_size:{};\n' \
                'service_size:{};\n'.format(self.from_node, self.to_node,
-                                          self.type_message, self.info_size,
-                                          self.service_size)
+                                           self.type_message, self.info_size,
+                                           self.service_size)
 
         # def __repr__(self):
         #     return '{};{};{};{};{};'.format(self.from_node, self.to_node, self.type_message, self.info_size,
