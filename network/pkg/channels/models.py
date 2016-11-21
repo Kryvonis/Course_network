@@ -8,7 +8,7 @@ weights = (1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27, 28)
 class Channel:
     def __init__(self, id, start_node_id, end_node_id, type='Duplex'):
         self.id = id
-        self.weight = weights[random.randint(0, len(weights) - 1)]
+        self.weight = random.choice(weights)
         self.type = type
         self.error_prob = random.random()
         self.start_node_id = start_node_id
