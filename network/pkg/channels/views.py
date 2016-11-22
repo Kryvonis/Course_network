@@ -1,8 +1,7 @@
 from django.shortcuts import render, reverse
 from network.pkg.node.views import network
 from django.http import HttpResponsePermanentRedirect
-from network.pkg.channels.serializers import JSONChanelSerializer
-from network.pkg.node.creator import generate_channel
+from network.pkg.channels.creator import generate_channel
 import json
 
 
@@ -47,7 +46,7 @@ def remove_channel(request):
     start_node_id = int(req['start_node_id'])
     end_node_id = int(req['end_node_id'])
     global_channels_remove_id = 0
-    if not channel_exitst(start_node_id,end_node_id):
+    if not channel_exitst(start_node_id, end_node_id):
         return HttpResponsePermanentRedirect(reverse('index-node'))
     for node in network['nodes']:
         if node['id'] == start_node_id or node['id'] == end_node_id:

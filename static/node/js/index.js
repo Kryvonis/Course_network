@@ -161,6 +161,12 @@ function find_node(nodes, id) {
             return nodes[i];
     }
 }
+function find_node_by_address(nodes, address) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].address == address)
+            return nodes[i];
+    }
+}
 function find_channel(channels, first_node, second_node) {
     for (var i = 0; i < channels.length; i++) {
         if (channels[i].start_node_id == first_node && channels[i].end_node_id == second_node)
@@ -185,10 +191,11 @@ function close_modal_window_node() {
 }
 
 function add_node() {
+    var address = document.getElementById('add_node_address').value;
     $.ajax({
         url: 'node/add',
         type: 'POST',
-        data: "",
+        data: JSON.stringify({'address':address}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         async: true,
@@ -206,7 +213,8 @@ function save_network_state() {
     });
 }
 function remove_node() {
-    var id = document.getElementById('remove_node_id').value;
+    var address = document.getElementById('remove_node_address').value;
+    var id = find_node_by_address(network.nodes,address).id
     $.ajax({
         url: 'node/remove/'+id,
         type: 'POST',
@@ -218,8 +226,11 @@ function remove_node() {
 }
 
 function add_channel() {
-    var start_node_id = document.getElementById('add_start_node_id').value;
-    var end_node_id = document.getElementById('add_end_node_id').value;
+    var start_node_id = find_node_by_address(network.nodes,
+    document.getElementById('add_start_node_id').value).id;
+    var end_node_id = find_node_by_address(network.nodes,
+    document.getElementById('add_end_node_id').value).id;
+
     $.ajax({
         url: 'channel/add',
         type: 'POST',
@@ -230,8 +241,10 @@ function add_channel() {
     });
 }
 function remove_channel() {
-    var start_node_id = document.getElementById('remove_start_node_id').value;
-    var end_node_id = document.getElementById('remove_end_node_id').value;
+    var start_node_id = find_node_by_address(network.nodes,
+    document.getElementById('remove_start_node_id').value).id;
+    var end_node_id = find_node_by_address(network.nodes,
+    document.getElementById('remove_end_node_id').value).id;
     $.ajax({
         url: 'channel/remove',
         type: 'POST',
@@ -253,6 +266,22 @@ function regenerate() {
         async: true,
     });
     location.reload();
+}
+
+function send_datagram() {
+    var start_node_id = document.getElementById('datagram_start_node_id').value;
+    var end_node_id = document.getElementById('datagram_end_node_id').value;
+    var info_size = document.getElementById('datagram_info_size_id').value;
+
+    $.ajax({
+        url: 'message/datagram',
+        type: 'POST',
+        data: JSON.stringify({'start_node_address':start_node_id, 'end_node_address':end_node_id,
+        'info_size':info_size}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
 }
 function save_nodes() {
     $.ajax({
