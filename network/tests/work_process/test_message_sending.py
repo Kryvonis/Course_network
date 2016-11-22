@@ -31,6 +31,10 @@ def split_messages(message):
 def send_message_in_datagram(message, network):
     node_sender = find_node_by_address(message.from_node, network)
     node_getter = find_node_by_address(message.to_node, network)
+
+    # add logic if node getter not from this local network
+    # if message.to_node.split(',')[0] != message.from_node.split(',')[0]:
+
     path = node_sender.table.path[node_getter.address].split(',')
     next_node = path[1]
     channes_sender = find_channel(node_sender.channels, node_sender.id,
@@ -43,13 +47,10 @@ def send_message_in_datagram(message, network):
         # check if can send
         if channes_sender.can_send_message(node_sender.id):
             # send to channel buffer
-            channes_sender.put_message_to_channel(i,node_sender.id)
-
-
+            channes_sender.put_message_to_channel(i, node_sender.id)
 
     # add to end buffer
     channes_sender.send_from_channel_to_buffer()
-
 
     # read message
     for channel in node_getter.channels:
@@ -57,9 +58,7 @@ def send_message_in_datagram(message, network):
         if buffer:
             print(buffer[0])
 
-    # channes_sender.put_message_to_channel(message, node_sender.id)
-
-
+            # channes_sender.put_message_to_channel(message, node_sender.id)
 
 
 if __name__ == '__main__':
