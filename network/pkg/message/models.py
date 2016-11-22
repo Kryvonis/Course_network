@@ -7,10 +7,11 @@ from django.db import models
 class Message:
     __id = 0
 
-    def __init__(self, time, from_node, to_node, type_message, info_size, service_size):
+    def __init__(self, time, from_node, to_node, type_message, info_size, service_size, delay):
         self.id = Message.__id
         Message.__id += 1
         self.time = time
+        self.delay = delay
         self.from_node = from_node
         self.to_node = to_node
         self.type_message = type_message

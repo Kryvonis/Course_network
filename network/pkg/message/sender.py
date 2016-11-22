@@ -32,6 +32,10 @@ def get_next_node_path(from_node, to_node, current_node):
     return next_node
 
 
+def message_delivered():
+    pass
+
+
 def send_message_in_datagram(message, network):
     """
     need to send message and return all path of sending
@@ -39,6 +43,16 @@ def send_message_in_datagram(message, network):
     :param network: what network
     :return: path
     """
+    i = 0
+    # cycle while not delivered message
+    while message_delivered():
+        current_node = network[i]
+        i += 1
+        if i == len(network):
+            i = 0
+        for channel in current_node.channels:
+            pass
+
     node_sender = find_node_by_address(message.from_node, network)
     node_getter = find_node_by_address(message.to_node, network)
     # Node getter from other region
