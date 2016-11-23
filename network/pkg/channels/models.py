@@ -26,24 +26,46 @@ class Channel:
         self.is_buisy = False
 
     def get_node_buffer(self, id):
+        """
+        return node buffer
+        :param id: node id
+        :return: node_buffer
+        """
         if id == self.start_node_id:
             return self.start_node_buffer
         else:
             return self.end_node_buffer
 
     def add_to_buffer(self, id, msg):
+        """
+        add to node buffer
+        :param id: node id
+        :param msg: what message you want to add
+        :return: None
+        """
         if id == self.start_node_id:
             self.start_node_buffer.append(msg)
         else:
             self.end_node_buffer.append(msg)
 
     def remove_from_buffer(self, id, msg):
+        """
+        remove message from buffer
+        :param id: node id
+        :param msg: what message you want to remove
+        :return: None
+        """
         if id == self.start_node_id:
             self.start_node_buffer.pop(self.start_node_buffer.index(msg))
         else:
             self.end_node_buffer.pop(self.end_node_buffer.index(msg))
 
     def can_send_message(self, id):
+        """
+        Check if you can send message,
+        :param id: node id
+        :return: boolean
+        """
         if self.is_buisy:
             return False
         if self.type == 'duplex':
@@ -56,33 +78,65 @@ class Channel:
                     return False
                 return True
 
-    def put_message_to_channel(self, msg, position):
-        self.message_buffer[str(position)] = msg
-        if position == self.start_node_id:
-            self.start_node_buffer.pop(self.start_node_buffer.index(msg))
-        else:
-            self.end_node_buffer.pop(self.end_node_buffer.index(msg))
+    def __put_message_to_channel(self, msg, id):
+        """
+        add message to channel buffer and remove from node buffer
+        :param msg: what message
+        :param id: node id
+        :return: None
+        """
+        self.message_buffer[str(id)] = msg
+        self.remove_from_buffer(id, msg)
+
+    def try_send_from_node_buffer_to_channel(self, id):
+        """
+        send from node buffer to channel buffer with correct logic
+        :param id: node id
+        :return:
+        """
+        buffer = self.get_node_buffer(id)
+        if self.can_send_message(id) and buffer:
+                self.__put_message_to_channel(buffer[0], id)
 
     def send_from_channel_to_buffer(self):
+        """
+        add message to node buffer after delay and remove from channel buffer
+        :return:
+        """
         for key, msg in self.message_buffer.items():
             if msg:
-                if msg.time == 0:
+                if msg.delay == 0:
                     self.__send_message(key, msg)
                     self.message_buffer[key] = 0
                 else:
-                    msg.time -= 1
+                    msg.delay -= 1
+
+    # def send_from_buffer_to_channel(self, node_id):
+    #     if self.can_send_message(node_id) and self.get_node_buffer(node_id):
 
     def __send_message(self, key, msg):
+        """
+        logic for adding message from channel buffer to node buffer
+        :param key: node buffer key
+        :param msg: message
+        :return: None
+        """
         if int(key) == self.end_node_id:
             self.start_node_buffer.append(msg)
         else:
             self.end_node_buffer.append(msg)
 
-    def get_message_from_channel(self, position):
-        if self.message_buffer:
-            tmp = self.message_buffer[position]
-            self.message_buffer[position] = 0
-            return tmp
+    # def get_message_from_channel(self, position):
+    #     """
+    #     remove from channel buffer message
+    #     not working correct
+    #     :param position:
+    #     :return:
+    #     """
+    #     if self.message_buffer:
+    #         tmp = self.message_buffer[position]
+    #         self.message_buffer[position] = 0
+    #         return tmp
 
     # def add_to_start_buffer
 

@@ -37,9 +37,3 @@ class Message:
         # def __repr__(self):
         #     return '{};{};{};{};{};'.format(self.from_node, self.to_node, self.type_message, self.info_size,
         #                                     self.service_size)
-
-
-if __name__ == '__main__':
-    m1 = Message(0, 0, 0, 0, 0, 0)
-    print(m1.__dict__)
-    print(m1.service_size)
