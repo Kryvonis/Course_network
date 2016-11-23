@@ -1,7 +1,6 @@
 # from django.db import models
 # Create your models here.
 import random
-from network.pkg.node.finder import find_node_by_address
 
 weights = (1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27, 28)
 channels_types = ('duplex', 'halfduplex')
@@ -85,6 +84,7 @@ class Channel:
         :param id: node id
         :return: None
         """
+        msg.delay = int(msg.info_size / 10)
         self.message_buffer[str(id)] = msg
         self.remove_from_buffer(id, msg)
 
@@ -96,7 +96,9 @@ class Channel:
         """
         buffer = self.get_node_buffer(id)
         if self.can_send_message(id) and buffer:
-                self.__put_message_to_channel(buffer[0], id)
+            self.__put_message_to_channel(buffer[0], id)
+            return True
+        return False
 
     def send_from_channel_to_buffer(self):
         """
@@ -108,6 +110,7 @@ class Channel:
                 if msg.delay == 0:
                     self.__send_message(key, msg)
                     self.message_buffer[key] = 0
+                    return True, msg, key
                 else:
                     msg.delay -= 1
 

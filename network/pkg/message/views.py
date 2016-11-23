@@ -2,23 +2,44 @@ from django.shortcuts import render
 from django.http.response import HttpResponse
 
 from network.pkg.message.creator import generate_message
-from network.pkg.message.sender import send_message_in_datagram as smid
-from network.pkg.message.sender import send_message_in_connect as smic
-from network.pkg.node.views import network
+from network.pkg.message.sender import add_message_in_datagram, step, statistic_table
+from network.pkg.node.views import nodes, channels
 
 import json
 
+iter_node = {'i': 0}
+iter_number = 1000
+
+
+# STATISTIC_TABLE = StatisticTable()
 
 # Create your views here.
 
 def send_message_in_datagram(request):
     req = json.loads(request.body.decode('utf-8'))
     message = generate_message(req['start_node_address'], req['end_node_address'], 'data', int(req['info_size']))
-    # smid()
-    print(req['start_node_address'])
-    print(req['end_node_address'])
+    add_message_in_datagram(message, nodes)
+    # main_loop(network, channels)
     return HttpResponse(200)
 
 
 def send_message_in_connect(request):
+    return HttpResponse(200)
+
+
+def next_iteration(request):
+    step(iter_node['i'], nodes, channels)
+    iter_node['i'] += 1
+    if iter_node['i'] == len(nodes):
+        iter_node['i'] = 0
+    return HttpResponse(200)
+    # statistic_table.show()
+
+
+def run(request):
+    for i in range(iter_number):
+        step(iter_node['i'], nodes, channels)
+        iter_node['i'] += 1
+        if iter_node['i'] == len(nodes):
+            iter_node['i'] = 0
     return HttpResponse(200)

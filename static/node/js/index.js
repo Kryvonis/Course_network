@@ -283,6 +283,28 @@ function send_datagram() {
         async: true,
     });
 }
+function next_step() {
+    $.ajax({
+        url: 'message/step',
+        type: 'POST',
+        data: "",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+    location.reload();
+}
+function run() {
+    $.ajax({
+        url: 'message/run',
+        type: 'POST',
+        data: "",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+    location.reload();
+}
 function save_nodes() {
     $.ajax({
         url: 'jsonsave',

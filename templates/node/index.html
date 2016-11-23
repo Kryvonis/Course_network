@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="{% static 'node/css/index.css' %}">
 </head>
 <body onload="Generate({{network}})">
-{{request.get_host}}
 <div>
     <!--NODES-->
     <div>
@@ -114,34 +113,8 @@
         </div>
         <!--SAVE-->
         <button type="button" class="btn btn-success" onclick="save_nodes()">Save Node</button>
-        <!--LOAD-->
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#SaveNodesModal">
-            Load Nodes
-        </button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="SaveNodesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="SaveModalLabel">Save Nodes</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="load_nodes">file</span>
-                            <input id="load_nodes_id" type="text" class="form-control" placeholder="num"
-                                   aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-default" onclick="load_nodes()">Load</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <button type="button" class="btn btn-success" onclick="load_nodes()">Load Node</button>
     </div>
     <!--CHANNELS-->
     <div>
@@ -255,6 +228,10 @@
             </div>
         </div>
 
+    <!--NEXT STEP-->
+        <button type="button" class="btn btn-warning" onclick="next_step()">Next</button>
+        <button type="button" class="btn btn-success" onclick="run()">Run</button>
+    <!---->
     </div>
 </div>
 <!--Modal for channel-->
