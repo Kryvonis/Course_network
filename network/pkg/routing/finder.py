@@ -109,11 +109,3 @@ def initialize(network):
     network = region1 + region2
     # print(network)
 
-
-if __name__ == '__main__':
-    channels = []
-    network = []
-
-    network, _ = generate_randomly(3, 2)
-    # dijkstra(network,0)
-    initialize(network)

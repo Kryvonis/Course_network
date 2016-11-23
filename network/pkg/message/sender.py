@@ -81,19 +81,6 @@ def step(i, network, network_channels):
     for channel in network_channels:
         channel.send_from_channel_to_buffer()
 
-        #
-
-
-# def main_loop(network, network_channels):
-#     i = 0
-#     # for cycle in range(CYCLE_COUNT):
-#     step(i, network, network_channels)
-#     i += 1
-#
-#     if i == len(network):
-#         i = 0
-#     statistic_table.show()
-
 
 def get_next_node_path(from_node, to_node, current_node):
     """

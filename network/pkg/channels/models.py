@@ -2,27 +2,26 @@
 # Create your models here.
 import random
 
-weights = (1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27, 28)
-channels_types = ('duplex', 'halfduplex')
-
 
 class Channel:
-    def __init__(self, id, start_node_id, end_node_id, type=random.choice(channels_types)):
+    def __init__(self, id, start_node_id, end_node_id, weight,
+                 type, start_node_buffer,
+                 end_node_buffer, is_buisy, message_buffer, error_prob):
         self.id = id
-        self.weight = random.choice(weights)
+        self.weight = weight
         self.type = type
-        self.error_prob = random.random()
+        self.error_prob = error_prob
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
-        self.message_buffer = {}
+        self.message_buffer = message_buffer
         if self.type == 'duplex':
             self.message_buffer['{}'.format(self.start_node_id)] = 0
             self.message_buffer['{}'.format(self.end_node_id)] = 0
         else:
             self.message_buffer['0'] = 0
-        self.start_node_buffer = []
-        self.end_node_buffer = []
-        self.is_buisy = False
+        self.start_node_buffer = start_node_buffer
+        self.end_node_buffer = end_node_buffer
+        self.is_buisy = is_buisy
 
     def get_node_buffer(self, id):
         """
@@ -72,7 +71,7 @@ class Channel:
                 return False
             return True
         if self.type == 'halfduplex':
-            for key, msg in self.message_buffer:
+            for key, msg in self.message_buffer.items():
                 if self.message_buffer[key]:
                     return False
                 return True

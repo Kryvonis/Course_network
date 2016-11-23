@@ -11,44 +11,50 @@ from network.pkg.routing.finder import initialize
 import json
 import os
 
+# network_json = {}
 network = {}
-nodes, channels = generate_randomly(8, 2)
-initialize(nodes)
-network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)
+# network['nodes'], network['channels'] = generate_randomly(8, 2)
+# nodes, channels = g
+
+network['nodes'], network['channels'] = generate_randomly(8, 2)
+initialize(network['nodes'])
 
 
 @ensure_csrf_cookie
 def index(request):
     return render(request, 'node/index.html',
-                  context={"network": network})
+                  context={"network": {'nodes': JSONNodeSerializer.encode(network['nodes']),
+                                       'channels': JSONChanelSerializer.encode(network['channels'])}})
 
 
 def save_pos(request):
     req = json.loads(request.body.decode('utf-8'))
-    network['nodes'] = req['nodes']
-    network['channels'] = req['channels']
+    network['nodes'] = JSONNodeSerializer.decode(req['nodes'])
+    network['channels'] = JSONChanelSerializer.decode(req['channels'])
     return HttpResponse(200)
 
 
 def add_node(request):
     req = json.loads(request.body.decode('utf-8'))
     print(reverse('index-node'))
-    network['nodes'].append(generate_node((network['nodes'][-1]['id'] + 1), req['address']))
+    network['nodes'].append(
+        generate_node((network['nodes'][-1].id + 1), req['address'])
+    )
     return HttpResponse(200)
 
 
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
-    nodes, channels = generate_randomly(int(req['node_nums']), int(req['average_nums']))
-    initialize(nodes)
-    network['nodes'], network['channels'] = JSONNodeSerializer.encode(nodes), JSONChanelSerializer.encode(channels)
+    network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
+    initialize(network['nodes'])
     return HttpResponse(200)
 
 
 def save(request):
     req = json.loads(request.body.decode('utf-8'))
     with open(os.path.join(settings.BASE_DIR, req['filename']), 'w') as f:
-        json.dump(network, f)
+        json.dump({'nodes': JSONNodeSerializer.encode(network['nodes']),
+                   'channels': JSONChanelSerializer.encode(network['channels'])}, f)
     return HttpResponse(200)
 
 
@@ -56,7 +62,8 @@ def load(request):
     req = json.loads(request.body.decode('utf-8'))
     with open(os.path.join(settings.BASE_DIR, req['filename']), 'r') as f:
         load_dump = json.load(f)
-        network['nodes'], network['channels'] = load_dump['nodes'], load_dump['channels']
+        network['nodes'], network['channels'] = JSONNodeSerializer.decode(load_dump['nodes']), \
+                                                JSONChanelSerializer.decode(load_dump['channels'])
     return HttpResponse(200)
 
 
@@ -66,19 +73,19 @@ def remove_node(request, id):
 
     for node in network['nodes']:
         channels_remove_id = []
-        if id == node['id']:
+        if id == node.id:
             continue
-        for _channel in node['channels']:
-            if _channel['end_node_id'] == id or _channel['start_node_id'] == id:
+        for _channel in node.channels:
+            if _channel.end_node_id == id or _channel.start_node_id == id:
                 channels_remove_id.append(_channel)
                 global_channels_remove_id.append(_channel)
         for rm_channel in channels_remove_id:
-            node['channels'].remove(rm_channel)
+            node.channels.remove(rm_channel)
     for rm_channel in global_channels_remove_id:
         network['channels'].remove(rm_channel)
     # network['nodes']
     for node in network['nodes']:
-        if id == node['id']:
+        if id == node.id:
             network['nodes'].remove(node)
 
     return HttpResponse(204)
