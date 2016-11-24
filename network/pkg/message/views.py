@@ -8,7 +8,7 @@ from network.pkg.node.views import network
 import json
 
 iter_node = {'i': 0}
-iter_number = 1000
+iter_number = 100000
 
 
 # STATISTIC_TABLE = StatisticTable()

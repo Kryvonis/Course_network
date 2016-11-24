@@ -5,7 +5,6 @@ from network.pkg.channels.finder import find_channel
 from network.pkg.statistic.models import StatisticTable
 import datetime
 
-CYCLE_COUNT = 200
 statistic_table = StatisticTable()
 
 
@@ -110,6 +109,7 @@ def release_logic(buffer, current_node, channel, network):
     """
     if buffer[0].to_node == current_node.address:
         channel.is_busy = 0
+        buffer.remove(buffer[0])
     else:
         send_message(buffer, current_node, channel, network)
         channel.is_busy = 0
