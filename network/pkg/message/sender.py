@@ -1,4 +1,5 @@
-from network.pkg.message.creator import generate_new_message, split_messages_to_datagrams, generate_request_to_connect
+from network.pkg.message.creator import generate_new_message, generate_response_to_connect, split_messages_to_datagrams, \
+    generate_request_to_connect
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.channels.finder import find_channel
 from network.pkg.statistic.models import StatisticTable
@@ -13,35 +14,7 @@ def datagram_logic(buffer, current_node, channel, network):
         message_delivered(channel, buffer[0], current_node)
         # return
     else:
-        node_sender = find_node_by_address(buffer[0].from_node, network)
-        node_getter = find_node_by_address(buffer[0].to_node, network)
-        next_node = find_node_by_address(get_next_node_path(node_sender, node_getter, current_node),
-                                         network)
-        channel_sender = find_channel(current_node.channels, current_node.id,
-                                      next_node.id)
-        if channel_sender != channel:
-            # get from one buffer and sent to another buffer on node
-            statistic_table.add_row('send from one buffer to another',
-                                    current_node.address,
-                                    next_node.address,
-                                    datetime.datetime.now()
-                                    )
-            channel_sender.add_to_buffer(current_node.id, buffer[0])
-
-            if channel_sender.try_send_from_node_buffer_to_channel(current_node.id, buffer[0]):
-                statistic_table.add_row('send message using channel between',
-                                        current_node.address,
-                                        next_node.address,
-                                        datetime.datetime.now()
-                                        )
-            channel.remove_from_buffer(current_node.id, buffer[0])
-        else:
-            if channel_sender.try_send_from_node_buffer_to_channel(current_node.id, buffer[0]):
-                statistic_table.add_row('send message using channel between',
-                                        current_node.address,
-                                        next_node.address,
-                                        datetime.datetime.now()
-                                        )
+        send_message(buffer, current_node, channel, network)
 
 
 def connect_logic(buffer, current_node, channel, network):
@@ -53,7 +26,13 @@ def connect_logic(buffer, current_node, channel, network):
     :param network:
     :return:
     """
-    pass
+    if not channel.is_busy:
+        # create request and wait for response
+        request = generate_request_to_connect(buffer[0])
+        buffer.insert(0, request)
+        send_message(buffer, current_node, channel, network)
+
+    channel.is_busy = 1
 
 
 def request_logic(buffer, current_node, channel, network):
@@ -66,19 +45,110 @@ def request_logic(buffer, current_node, channel, network):
     :param network:
     :return:
     """
-    pass
+    if buffer[0].to_node == current_node.address:
+        # generate response check some situation when channel can`t be
+        if True:
+            response = generate_response_to_connect(buffer[0], '+')
+            channel.is_busy = 1
+        else:
+            response = generate_response_to_connect(buffer[0], '-')
+        channel.remove_from_buffer(current_node.id, buffer[0])
+        buffer.insert(0, response)
+        send_message(buffer, current_node, channel, network)
+    else:
+        send_message(buffer, current_node, channel, network)
 
 
 def response_plus_logic(buffer, current_node, channel, network):
     """
-    if everything is ok and channel is not busy generate response+
+    if we get response+ for our message need to send our message
     :param buffer:
     :param current_node:
     :param channel:
     :param network:
     :return:
     """
-    pass
+    if buffer[0].to_node == current_node.address:
+        buffer.remove(buffer[0])
+        channel.is_busy = 0
+        buffer[0].type_message = 'data'
+        send_message(buffer, current_node, channel, network)
+        channel.is_busy = 1
+    else:
+        send_message(buffer, current_node, channel, network)
+
+
+def data_logic(buffer, current_node, channel, network):
+    """
+    if we get data message need to generate response for releasing channel
+    :param buffer:
+    :param current_node:
+    :param channel:
+    :param network:
+    :return:
+    """
+    if buffer[0].to_node == current_node.address:
+        response = generate_response_to_connect(buffer[0], '_rel+')
+        message_delivered(channel, buffer[0], current_node)
+        buffer.insert(0, response)
+        send_message(buffer, current_node, channel, network)
+        channel.is_busy = 0
+    else:
+        channel.is_busy = 0
+        send_message(buffer, current_node, channel, network)
+        channel.is_busy = 1
+
+
+def release_logic(buffer, current_node, channel, network):
+    """
+    if we get data message need to generate response for releasing channel
+    :param buffer:
+    :param current_node:
+    :param channel:
+    :param network:
+    :return:
+    """
+    if buffer[0].to_node == current_node.address:
+        channel.is_busy = 0
+    else:
+        send_message(buffer, current_node, channel, network)
+        channel.is_busy = 0
+
+
+def send_message(buffer, current_node, channel, network):
+    node_sender = find_node_by_address(buffer[0].from_node, network)
+    node_getter = find_node_by_address(buffer[0].to_node, network)
+    next_node = find_node_by_address(get_next_node_path(node_sender, node_getter, current_node),
+                                     network)
+    channel_sender = find_channel(current_node.channels, current_node.id,
+                                  next_node.id)
+    msg_type = buffer[0].type_message
+    if channel_sender != channel:
+        # get from one buffer and sent to another buffer on node
+        statistic_table.add_row('send from one buffer to another. Message {}'.format(msg_type),
+                                current_node.address,
+                                next_node.address,
+                                datetime.datetime.now()
+                                )
+        channel_sender.add_to_buffer(current_node.id, buffer[0])
+
+        if channel_sender.try_send_from_node_buffer_to_channel(current_node.id, buffer[0]):
+            statistic_table.add_row(
+                'send connect message using channel between. Message {}'.format(msg_type),
+                current_node.address,
+                next_node.address,
+                datetime.datetime.now()
+            )
+        channel.remove_from_buffer(current_node.id, buffer[0])
+    else:
+
+        if channel_sender.try_send_from_node_buffer_to_channel(current_node.id, buffer[0]):
+            statistic_table.add_row(
+                'send connect message using channel between. Message {}'.format(msg_type),
+                current_node.address,
+                next_node.address,
+                datetime.datetime.now()
+                )
 
 
 def response_minus_logic(buffer, current_node, channel, network):
@@ -119,6 +189,12 @@ def step(i, network, network_channels):
                 continue
             if buffer[0].type_message == 'connect':
                 connect_logic(buffer, current_node, channel, network)
+                continue
+            if buffer[0].type_message == 'data':
+                data_logic(buffer, current_node, channel, network)
+                continue
+            if buffer[0].type_message == 'response_rel+':
+                release_logic(buffer, current_node, channel, network)
                 continue
             if buffer[0].type_message == 'request':
                 request_logic(buffer, current_node, channel, network)

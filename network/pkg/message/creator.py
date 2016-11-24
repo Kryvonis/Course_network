@@ -40,23 +40,14 @@ def generate_request_to_connect(message):
                    1)
 
 
-def generate_response_to_connect(message, type):
-    if type:
-        return Message(datetime.datetime.now(),
-                       message.from_node,
-                       message.to_node,
-                       'response+',
-                       0,
-                       32,
-                       1)
-    else:
-        return Message(datetime.datetime.now(),
-                       message.from_node,
-                       message.to_node,
-                       'response-',
-                       0,
-                       32,
-                       1)
+def generate_response_to_connect(message, response_type):
+    return Message(datetime.datetime.now(),
+                   message.to_node,
+                   message.from_node,
+                   'response' + response_type,
+                   0,
+                   32,
+                   1)
 
 
 def generate_new_message(network):

@@ -7,7 +7,7 @@ if __name__ == '__main__':
     network, _ = generate_randomly(2, 1)
     initialize(network)
     message = generate_message('0.1', '1.1', 'connect', 10, 10)
-    add_message_in_datagram(message, network)
+    add_message_in_connect(message, network)
     i = 0
     for j in range(200):
         step(i, network, _)

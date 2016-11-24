@@ -283,6 +283,21 @@ function send_datagram() {
         async: true,
     });
 }
+function send_connect() {
+    var start_node_id = document.getElementById('connect_start_node_id').value;
+    var end_node_id = document.getElementById('connect_end_node_id').value;
+    var info_size = document.getElementById('connect_info_size_id').value;
+
+    $.ajax({
+        url: 'message/connect',
+        type: 'POST',
+        data: JSON.stringify({'start_node_address':start_node_id, 'end_node_address':end_node_id,
+        'info_size':info_size}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+    });
+}
 function next_step() {
     $.ajax({
         url: 'message/step',

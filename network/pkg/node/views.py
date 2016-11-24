@@ -17,7 +17,7 @@ network = {}
 # network['nodes'], network['channels'] = generate_randomly(8, 2)
 # nodes, channels = g
 
-network['nodes'], network['channels'] = generate_randomly(8, 2)
+network['nodes'], network['channels'] = generate_randomly(2, 1)
 initialize(network['nodes'])
 
 

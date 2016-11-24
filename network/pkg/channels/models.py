@@ -5,6 +5,7 @@ from network.pkg.message.sender import statistic_table
 import random
 import datetime
 
+
 class Channel:
     def __init__(self, id, start_node_id, end_node_id, weight,
                  type, start_node_buffer,
@@ -44,9 +45,15 @@ class Channel:
         :return: None
         """
         if id == self.start_node_id:
-            self.start_node_buffer.append(msg)
+            if 'response' in msg.type_message:
+                self.start_node_buffer.insert(0, msg)
+            else:
+                self.start_node_buffer.append(msg)
         else:
-            self.end_node_buffer.append(msg)
+            if 'response' in msg.type_message:
+                self.end_node_buffer.insert(0, msg)
+            else:
+                self.end_node_buffer.append(msg)
 
     def remove_from_buffer(self, id, msg):
         """
@@ -66,7 +73,7 @@ class Channel:
         :param id: node id
         :return: boolean
         """
-        if self.is_busy and (msg.type_message != 'response+' or msg.type_message != 'response-'):
+        if (self.is_busy == 1) and ('response' not in msg.type_message):
             return False
         if self.type == 'duplex':
             if self.message_buffer[str(id)]:
@@ -131,9 +138,15 @@ class Channel:
         """
         if random.random() > self.error_prob:
             if int(key) == self.end_node_id:
-                self.start_node_buffer.append(msg)
+                if 'response' in msg.type_message:
+                    self.start_node_buffer.insert(0, msg)
+                else:
+                    self.start_node_buffer.append(msg)
             else:
-                self.end_node_buffer.append(msg)
+                if 'response' in msg.type_message:
+                    self.end_node_buffer.insert(0, msg)
+                else:
+                    self.end_node_buffer.append(msg)
             return False
         else:
             statistic_table.add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
