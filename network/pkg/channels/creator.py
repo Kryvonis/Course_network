@@ -10,11 +10,12 @@ def generate_channel(id, start_node, end_node):
     id = id
     start_node_buffer = []
     end_node_buffer = []
-    is_buisy = 0
+    is_busy = 0
     message_buffer = {}
     weight = random.choice(weights)
     channel_type = random.choice(channels_types)
-    error_prob = random.random()
+    error_prob = random.random() * 0.01
+    # error_prob = random.random()
     return Channel(id=id,
                    start_node_id=start_node,
                    end_node_id=end_node,
@@ -22,7 +23,7 @@ def generate_channel(id, start_node, end_node):
                    weight=weight,
                    type=channel_type,
                    message_buffer=message_buffer,
-                   is_buisy=is_buisy,
+                   is_busy=is_busy,
                    end_node_buffer=end_node_buffer,
                    start_node_buffer=start_node_buffer,
                    )

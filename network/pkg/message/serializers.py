@@ -7,15 +7,7 @@ class JSONMessageSerializer:
         if isinstance(obj, list):
             messages = []
             for o in obj:
-                messages.append({'id': o.id,
-                                 'time': o.time,
-                                 'from_node': o.from_node,
-                                 'to_node': o.to_node,
-                                 'type_message': o.type_message,
-                                 'info_size': o.info_size,
-                                 'service_size': o.service_size,
-                                 }
-                                )
+                messages.append(JSONMessageSerializer.encode(o))
             return messages
         if isinstance(obj, Message):
             return {'id': obj.id,
@@ -32,15 +24,7 @@ class JSONMessageSerializer:
         if isinstance(obj, list):
             messages = []
             for o in obj:
-                message = Message(o['time'],
-                                  o['from_node'],
-                                  o['to_node'],
-                                  o['type_message'],
-                                  o['info_size'],
-                                  o['service_size'],
-                                  )
-                message.set_id(o['id'])
-                messages.append(message)
+                messages.append(JSONMessageSerializer.decode(o))
             return messages
         if isinstance(obj, dict):
             message = Message(obj['time'],
@@ -49,6 +33,7 @@ class JSONMessageSerializer:
                               obj['type_message'],
                               obj['info_size'],
                               obj['service_size'],
+                              obj['delay'],
                               )
             message.set_id(obj['id'])
             return message

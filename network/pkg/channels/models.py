@@ -1,12 +1,14 @@
 # from django.db import models
 # Create your models here.
+from network.pkg.message.creator import generate_error_message
+from network.pkg.message.sender import statistic_table
 import random
-
+import datetime
 
 class Channel:
     def __init__(self, id, start_node_id, end_node_id, weight,
                  type, start_node_buffer,
-                 end_node_buffer, is_buisy, message_buffer, error_prob):
+                 end_node_buffer, is_busy, message_buffer, error_prob):
         self.id = id
         self.weight = weight
         self.type = type
@@ -21,7 +23,7 @@ class Channel:
             self.message_buffer['0'] = 0
         self.start_node_buffer = start_node_buffer
         self.end_node_buffer = end_node_buffer
-        self.is_buisy = is_buisy
+        self.is_busy = is_busy
 
     def get_node_buffer(self, id):
         """
@@ -58,13 +60,13 @@ class Channel:
         else:
             self.end_node_buffer.pop(self.end_node_buffer.index(msg))
 
-    def can_send_message(self, id):
+    def can_send_message(self, id, msg):
         """
         Check if you can send message,
         :param id: node id
         :return: boolean
         """
-        if self.is_buisy:
+        if self.is_busy and (msg.type_message != 'response+' or msg.type_message != 'response-'):
             return False
         if self.type == 'duplex':
             if self.message_buffer[str(id)]:
@@ -80,22 +82,26 @@ class Channel:
         """
         add message to channel buffer and remove from node buffer
         :param msg: what message
-        :param id: node id
+        :param id: node id which sending
         :return: None
         """
         msg.delay = int(msg.info_size / 10)
-        self.message_buffer[str(id)] = msg
+        if self.type == 'duplex':
+            self.message_buffer[str(id)] = msg
+        else:
+            self.message_buffer = {}
+            self.message_buffer[str(id)] = msg
         self.remove_from_buffer(id, msg)
 
-    def try_send_from_node_buffer_to_channel(self, id):
+    def try_send_from_node_buffer_to_channel(self, id, msg):
         """
         send from node buffer to channel buffer with correct logic
         :param id: node id
         :return:
         """
-        buffer = self.get_node_buffer(id)
-        if self.can_send_message(id) and buffer:
-            self.__put_message_to_channel(buffer[0], id)
+
+        if self.can_send_message(id, msg):
+            self.__put_message_to_channel(msg, id)
             return True
         return False
 
@@ -106,10 +112,10 @@ class Channel:
         """
         for key, msg in self.message_buffer.items():
             if msg:
-                if msg.delay == 0:
-                    self.__send_message(key, msg)
+                if msg.delay <= 0:
+                    if self.__send_message(key, msg):
+                        self.add_to_buffer(key, generate_error_message(msg))
                     self.message_buffer[key] = 0
-                    return True, msg, key
                 else:
                     msg.delay -= 1
 
@@ -123,10 +129,18 @@ class Channel:
         :param msg: message
         :return: None
         """
-        if int(key) == self.end_node_id:
-            self.start_node_buffer.append(msg)
+        if random.random() > self.error_prob:
+            if int(key) == self.end_node_id:
+                self.start_node_buffer.append(msg)
+            else:
+                self.end_node_buffer.append(msg)
+            return False
         else:
-            self.end_node_buffer.append(msg)
+            statistic_table.add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
+            print('DROPED')
+            if msg.type_message == 'datagram':
+                return False
+            return True
 
     # def get_message_from_channel(self, position):
     #     """
@@ -142,14 +156,14 @@ class Channel:
 
     # def add_to_start_buffer
 
-    def __str__(self, *args, **kwargs):
-        return ','.join((str(value) for value in self.__dict__.values()))
-
-    def __repr__(self, *args, **kwargs):
-        cls = self.__class__.__name__
-        attr = ('%s=%s' % item for item in self.__dict__.items())
-
-        return '%s(%s)' % (cls, ', '.join(attr))
+    # def __str__(self, *args, **kwargs):
+    #     return ','.join((str(value) for value in self.__dict__.values()))
+    #
+    # def __repr__(self, *args, **kwargs):
+    #     cls = self.__class__.__name__
+    #     attr = ('%s=%s' % item for item in self.__dict__.items())
+    #
+    #     return '%s(%s)' % (cls, ', '.join(attr))
 
     def __eq__(self, other):
         if not isinstance(other, Channel):

@@ -1,5 +1,9 @@
 from network.pkg.message.models import Message
 from network.pkg.message.serializers import JSONMessageSerializer
+import random
+import datetime
+
+MESSAGE_PROBABILITY = 0.5
 
 
 def generate_message(from_node, to_node, type_message, info_size, service_size=0):
@@ -11,9 +15,60 @@ def generate_message(from_node, to_node, type_message, info_size, service_size=0
     return message
 
 
+def generate_error_message(msg):
+    return Message(datetime.datetime.now(),
+                   msg.from_node,
+                   msg.to_node,
+                   'error',
+                   msg.info_size,
+                   msg.service_size,
+                   msg.delay)
+
+
 def generate_message_json(from_node, to_node, type_message, info_size, service_size):
     message = generate_message(from_node, to_node, type_message, info_size, service_size)
     return JSONMessageSerializer.encode(message)
+
+
+def generate_request_to_connect(message):
+    return Message(datetime.datetime.now(),
+                   message.from_node,
+                   message.to_node,
+                   'request',
+                   0,
+                   32,
+                   1)
+
+
+def generate_response_to_connect(message, type):
+    if type:
+        return Message(datetime.datetime.now(),
+                       message.from_node,
+                       message.to_node,
+                       'response+',
+                       0,
+                       32,
+                       1)
+    else:
+        return Message(datetime.datetime.now(),
+                       message.from_node,
+                       message.to_node,
+                       'response-',
+                       0,
+                       32,
+                       1)
+
+
+def generate_new_message(network):
+    prob = random.random()
+    if prob > MESSAGE_PROBABILITY:
+        from_node = random.choice(network)
+        to_node = random.choice(network)
+        while from_node == to_node:
+            to_node = random.choice(network)
+        data = '{} -> {}'.format(from_node.address, to_node.address)
+        message = generate_message(from_node.address, to_node.address, data, 100, 20)
+        return message
 
 
 def split_messages_to_datagrams(message):
@@ -22,7 +77,7 @@ def split_messages_to_datagrams(message):
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
-                                 message.type_message,
+                                 'datagram',
                                  message.info_size % 10,
                                  message.service_size,
                                  message.delay))
@@ -31,7 +86,7 @@ def split_messages_to_datagrams(message):
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
-                                 message.type_message,
+                                 'datagram',
                                  10,
                                  message.service_size,
                                  message.delay))

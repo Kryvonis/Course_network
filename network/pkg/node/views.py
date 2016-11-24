@@ -8,6 +8,7 @@ from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.channels.creator import generate_channel
 from network.pkg.node.creator import generate_randomly, generate_node
 from network.pkg.routing.finder import initialize
+from network.pkg.node.finder import find_node
 import json
 import os
 
@@ -31,6 +32,12 @@ def save_pos(request):
     req = json.loads(request.body.decode('utf-8'))
     network['nodes'] = JSONNodeSerializer.decode(req['nodes'])
     network['channels'] = JSONChanelSerializer.decode(req['channels'])
+    for node in network['nodes']:
+        node.channels = []
+    for channel in network['channels']:
+        network['nodes'][channel.start_node_id].channels.append(channel)
+        network['nodes'][channel.end_node_id].channels.append(channel)
+
     return HttpResponse(200)
 
 
@@ -59,11 +66,22 @@ def save(request):
 
 
 def load(request):
+    """
+    Not working correctly because after loading links to channels changes
+    :param request:
+    :return:
+    """
     req = json.loads(request.body.decode('utf-8'))
     with open(os.path.join(settings.BASE_DIR, req['filename']), 'r') as f:
         load_dump = json.load(f)
+
         network['nodes'], network['channels'] = JSONNodeSerializer.decode(load_dump['nodes']), \
                                                 JSONChanelSerializer.decode(load_dump['channels'])
+        for node in network['nodes']:
+            node.channels = []
+        for channel in network['channels']:
+            network['nodes'][channel.start_node_id].channels.append(channel)
+            network['nodes'][channel.end_node_id].channels.append(channel)
     return HttpResponse(200)
 
 

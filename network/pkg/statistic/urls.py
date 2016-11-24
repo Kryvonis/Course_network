@@ -18,5 +18,6 @@ from . import views
 
 urlpatterns = [
     url(r'^$', view=views.show_statistic, name='statistic'),
+    url(r'^result$', view=views.show_statistic, name='statistic'),
 
 ]
