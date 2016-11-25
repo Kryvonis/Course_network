@@ -92,6 +92,7 @@ class Channel:
         :param id: node id which sending
         :return: None
         """
+        # TODO Delay logic
         msg.delay = int(msg.info_size / 10)
         if self.type == 'duplex':
             self.message_buffer[str(id)] = msg

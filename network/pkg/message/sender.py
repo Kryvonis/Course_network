@@ -46,16 +46,27 @@ def request_logic(buffer, current_node, channel, network):
     """
     if buffer[0].to_node == current_node.address:
         # generate response check some situation when channel can`t be
-        if True:
-            response = generate_response_to_connect(buffer[0], '+')
-            channel.is_busy = 1
-        else:
-            response = generate_response_to_connect(buffer[0], '-')
+        response = generate_response_to_connect(buffer[0], '+')
+        channel.is_busy = 1
         channel.remove_from_buffer(current_node.id, buffer[0])
         buffer.insert(0, response)
         send_message(buffer, current_node, channel, network)
     else:
-        send_message(buffer, current_node, channel, network)
+        node_sender = find_node_by_address(buffer[0].from_node, network)
+        node_getter = find_node_by_address(buffer[0].to_node, network)
+        next_node = find_node_by_address(get_next_node_path(node_sender, node_getter, current_node),
+                                         network)
+        next_step_node = find_node_by_address(get_next_node_path(next_node, node_getter, next_node),
+                                              network)
+        next_step_channel = find_channel(next_node.channels, next_node.id,
+                                         next_step_node.id)
+        if next_step_channel.is_busy:
+            response = generate_response_to_connect(buffer[0], '-')
+            channel.remove_from_buffer(current_node.id, buffer[0])
+            buffer.insert(0, response)
+            send_message(buffer, current_node, channel, network)
+        else:
+            send_message(buffer, current_node, channel, network)
 
 
 def response_plus_logic(buffer, current_node, channel, network):
@@ -148,7 +159,7 @@ def send_message(buffer, current_node, channel, network):
                 current_node.address,
                 next_node.address,
                 datetime.datetime.now()
-                )
+            )
 
 
 def response_minus_logic(buffer, current_node, channel, network):
@@ -259,6 +270,7 @@ def add_message_in_datagram(message, network):
                                 i.to_node,
                                 datetime.datetime.now()
                                 )
+        statistic_table.message_add(i)
 
 
 def add_message_in_connect(message, network):
@@ -282,6 +294,7 @@ def add_message_in_connect(message, network):
                             message.to_node,
                             datetime.datetime.now()
                             )
+    statistic_table.message_add(message)
 
 
 def message_delivered(channel, message, current_node):
@@ -294,4 +307,5 @@ def message_delivered(channel, message, current_node):
         message.to_node,
         datetime.datetime.now()
     )
+    statistic_table.message_delivered(message)
     channel.remove_from_buffer(current_node.id, message)
