@@ -298,11 +298,12 @@ def add_message_in_connect(message, network):
 
 
 def message_delivered(channel, message, current_node):
+    message.time = (datetime.datetime.now() - message.time).microseconds
     statistic_table.add_row(
         'read message [type:{};size:{};service size{};creating time:{};delivery time:{}]'.
             format(message.type_message, message.info_size,
                    message.service_size, message.time,
-                   (datetime.datetime.now() - message.time).microseconds),
+                   datetime.datetime.now()),
         message.from_node,
         message.to_node,
         datetime.datetime.now()

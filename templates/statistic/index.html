@@ -22,6 +22,19 @@
 <body>
 <table class="table">
     <tr>
+        <th>Average Time</th>
+        <th>All Data Size</th>
+        <th>All Service Data Size</th>
+    </tr>
+        <tr>
+            <td>{{ statistic.avrg_time }}</td>
+            <td>{{ statistic.all_data_size }}</td>
+            <td>{{ statistic.all_service_size }}</td>
+        </tr>
+</table>
+
+<table class="table">
+    <tr>
         <th>Type</th>
         <th>From Node</th>
         <th>To Node</th>
