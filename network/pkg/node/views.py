@@ -5,27 +5,28 @@ from django.conf import settings
 
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
-from network.pkg.channels.creator import generate_channel
+
 from network.pkg.node.creator import generate_randomly, generate_node
-from network.pkg.routing.finder import initialize
-from network.pkg.node.finder import find_node
+from network.pkg.routing.finder import initialize, send_tables
+
 import json
 import os
 
-# network_json = {}
 network = {}
-# network['nodes'], network['channels'] = generate_randomly(8, 2)
-# nodes, channels = g
 
 network['nodes'], network['channels'] = generate_randomly(2, 1)
 initialize(network['nodes'])
+send_tables(network)
 
 
 @ensure_csrf_cookie
 def index(request):
     return render(request, 'node/index.html',
-                  context={"network": {'nodes': JSONNodeSerializer.encode(network['nodes']),
-                                       'channels': JSONChanelSerializer.encode(network['channels'])}})
+                  context={"network": {"nodes": JSONNodeSerializer.encode(network['nodes']),
+                                       "channels": JSONChanelSerializer.encode(network['channels'])
+                                       }
+                           }
+                  )
 
 
 def save_pos(request):

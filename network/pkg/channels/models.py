@@ -17,11 +17,12 @@ class Channel:
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
         self.message_buffer = message_buffer
-        if self.type == 'duplex':
-            self.message_buffer['{}'.format(self.start_node_id)] = 0
-            self.message_buffer['{}'.format(self.end_node_id)] = 0
-        else:
-            self.message_buffer['0'] = 0
+        if not message_buffer:
+            if self.type == 'duplex':
+                self.message_buffer['{}'.format(self.start_node_id)] = 0
+                self.message_buffer['{}'.format(self.end_node_id)] = 0
+            else:
+                self.message_buffer['0'] = 0
         self.start_node_buffer = start_node_buffer
         self.end_node_buffer = end_node_buffer
         self.is_busy = is_busy
@@ -92,8 +93,7 @@ class Channel:
         :param id: node id which sending
         :return: None
         """
-        # TODO Delay logic
-        msg.delay = int(msg.info_size / 10)
+        msg.delay = int(msg.info_size / self.weight)
         if self.type == 'duplex':
             self.message_buffer[str(id)] = msg
         else:
@@ -150,10 +150,16 @@ class Channel:
                     self.end_node_buffer.append(msg)
             return False
         else:
-            statistic_table.add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
+            statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
             print('DROPED')
             if msg.type_message == 'datagram':
+                msg.time = (datetime.datetime.now() - msg.time).microseconds
+                msg.info_size = 0
+                msg.service_size = 0
+                statistic_table['0'].message_delivered(msg)
                 return False
+            else:
+                self.add_to_buffer(key, msg)
             return True
 
     # def get_message_from_channel(self, position):
@@ -169,9 +175,6 @@ class Channel:
     #         return tmp
 
     # def add_to_start_buffer
-
-    # def __str__(self, *args, **kwargs):
-    #     return ','.join((str(value) for value in self.__dict__.values()))
     #
     # def __repr__(self, *args, **kwargs):
     #     cls = self.__class__.__name__

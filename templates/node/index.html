@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{% static 'node/css/index.css' %}">
 </head>
 <body onload="Generate({{network}})">
+<!--<body>-->
 <div>
     <!--NODES-->
     <div>
@@ -143,10 +144,25 @@
                             <input id="add_end_node_id" type="text" class="form-control" placeholder="address"
                                    aria-describedby="basic-addon1">
                         </div>
+
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon9">weight</span>
+                            <input id="weight_id" type="number" class="form-control" placeholder="weight"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div>
+                            <p class="text-center">Available weights is [1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27,
+                                28]</p>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="add_channel()">Add</button>
+                        <button type="button" class="btn btn-success" onclick="add_channel('duplex')">
+                            Add Duplex
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="add_channel('halfduplex')">
+                            Add Half-Duplex
+                        </button>
                     </div>
                 </div>
             </div>
@@ -266,10 +282,38 @@
                 </div>
             </div>
         </div>
-    <!--NEXT STEP-->
+        <!--NEXT STEP-->
         <button type="button" class="btn btn-warning" onclick="next_step()">Next</button>
-        <button type="button" class="btn btn-success" onclick="run()">Run</button>
-    <!---->
+        <!--<button type="button" class="btn btn-success" onclick="run()">Run</button>-->
+        <!--RUN-->
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#runModal">
+            Run
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="runModal" tabindex="-1" role="dialog" aria-labelledby="SendDatagramLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="SendRunLabel">Run</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-0">how_much_messages</span>
+                            <input id="how_much_id" type="text" class="form-control" placeholder="how much"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" onclick="run()">Run</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!---->
     </div>
 </div>
 <!--Modal for channel-->

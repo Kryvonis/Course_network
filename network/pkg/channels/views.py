@@ -15,8 +15,12 @@ def add_channel(request):
     req = json.loads(request.body.decode('utf-8'))
     if channel_exitst(int(req['start_node_id']), int(req['end_node_id'])):
         return HttpResponsePermanentRedirect(reverse('index-node'))
-    channel_add = generate_channel(int(network['channels'][-1].id) + 1, int(req['start_node_id']),
-                                   int(req['end_node_id']))
+    channel_add = generate_channel(int(network['channels'][-1].id) + 1,
+                                   int(req['start_node_id']),
+                                   int(req['end_node_id']),
+                                   req['channel_type'],
+                                   req['weight'],
+                                   )
     network['channels'].append(channel_add)
     for node in network['nodes']:
         if node.id == int(req['start_node_id']):

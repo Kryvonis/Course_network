@@ -1,13 +1,13 @@
 from network.pkg.message.models import Message
+from network.pkg.node.finder import find_node_by_address
 from network.pkg.message.serializers import JSONMessageSerializer
 import random
 import datetime
 
-MESSAGE_PROBABILITY = 0.5
+MESSAGE_PROBABILITY = 0.9
 
 
-def generate_message(from_node, to_node, type_message, info_size, service_size=0):
-    # TODO add time logic and service_size
+def generate_message(from_node, to_node, type_message, info_size, service_size=32):
     time = 0
     # service_size = 0
     delay = 0
@@ -53,32 +53,35 @@ def generate_response_to_connect(message, response_type):
 def generate_new_message(network):
     prob = random.random()
     if prob > MESSAGE_PROBABILITY:
-        from_node = random.choice(network)
-        to_node = random.choice(network)
+        from_node = random.choice(network['nodes'])
+        to_node = random.choice(network['nodes'])
         while from_node == to_node:
-            to_node = random.choice(network)
-        data = '{} -> {}'.format(from_node.address, to_node.address)
-        message = generate_message(from_node.address, to_node.address, data, 100, 20)
+            to_node = random.choice(network['nodes'])
+        if random.random() > 0.3:
+            data = 'connect'
+        else:
+            data = 'datagram'
+        message = generate_message(from_node.address, to_node.address, data, random.randint(256, 512), 32)
         return message
 
 
 def split_messages_to_datagrams(message):
     datagrams = []
-    if message.info_size % 10 != 0:
+    if message.info_size % 100 != 0:
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
                                  'datagram',
-                                 message.info_size % 10,
+                                 message.info_size % 100,
                                  message.service_size,
                                  message.delay))
 
-    for i in range(int(message.info_size / 10)):
+    for i in range(int(message.info_size / 100)):
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
                                  'datagram',
-                                 10,
+                                 100,
                                  message.service_size,
                                  message.delay))
     return datagrams

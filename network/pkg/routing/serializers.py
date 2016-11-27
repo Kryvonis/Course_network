@@ -8,7 +8,7 @@ class JSONRouteTableSerializer:
         if isinstance(obj, list):
             routes = []
             for o in obj:
-                routes.append(o.__dict__)
+                routes.append(JSONRouteTableSerializer.encode(o))
             return routes
         if isinstance(obj, RouteTable):
             return obj.__dict__

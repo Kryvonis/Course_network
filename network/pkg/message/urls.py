@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^datagram$', view=views.send_message_in_datagram, name='datagram'),
     url(r'^connect$', view=views.send_message_in_connect, name='connect'),
     url(r'^step$', view=views.next_iteration, name='next_step'),
-    url(r'^run$', view=views.run, name='next_step'),
+    url(r'^run$', view=views.run, name='run'),
 
 ]

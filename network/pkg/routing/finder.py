@@ -1,11 +1,16 @@
-from network.pkg.node.creator import generate_randomly
 from network.pkg.routing.models import RouteTable
-from network.pkg.node.models import Node
 from network.pkg.node.finder import find_node, find_node_by_address
-from network.pkg.channels.finder import find_channel, channel_exist
-from network.pkg.channels.models import Channel
+from network.pkg.channels.finder import find_channel
+from network.pkg.message.creator import generate_message
+from network.pkg.statistic.models import StatisticTable
+
+from network.pkg.message.sender import add_message_in_datagram, add_message_in_connect, step, set_statistic_table
+
+import json
 from math import inf
-import random
+
+iter_node = {'i': 0}
+statistic_table = {}
 
 
 def dijkstra(nodes, concrete_node, network):
@@ -106,6 +111,26 @@ def initialize(network):
 
     dijkstra(region1, main_node_1.id, network)
     dijkstra(region2, main_node_2.id, network)
+
     network = region1 + region2
     # print(network)
 
+
+def send_tables(network):
+    main_node_1 = find_node_by_address('0.0', network['nodes'])
+    main_node_2 = find_node_by_address('1.0', network['nodes'])
+    statistic_table['0'] = StatisticTable()
+    set_statistic_table(statistic_table['0'])
+    for node in range(1, int(len(network['nodes']) / 2)):
+        add_message_in_connect(generate_message(main_node_1.address, '0.' + str(node), 'connect', 128),
+                               network['nodes'])
+
+    for node in range(1, int(len(network['nodes']) / 2)):
+        add_message_in_connect(generate_message(main_node_2.address, '1.' + str(node), 'connect', 128), network['nodes'])
+
+
+    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_num:
+        step(iter_node['i'], network['nodes'], network['channels'])
+        iter_node['i'] += 1
+        if iter_node['i'] == len(network['nodes']):
+            iter_node['i'] = 0
