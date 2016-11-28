@@ -19,6 +19,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index-node'),
     url(r'^node/add$', view=views.add_node, name='add-node'),
+    url(r'^node/shutdown$', view=views.shutdown_node, name='add-node'),
     url(r'^regenerate$', view=views.regenerate, name='regenerate-node'),
     url(r'^jsonsave$', view=views.save, name='save-node-json'),
     url(r'^load$', view=views.load, name='load-node-json'),

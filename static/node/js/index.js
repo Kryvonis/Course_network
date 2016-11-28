@@ -110,8 +110,10 @@ function Generate(local_net) {
                 var node_id = layer.name.match(/\d+/g)[0];
                 var node = find_node(nodes, node_id);
                 modal_window.find('#id_node').text(node.id);
+                modal_window.find('#shutdown').text(node.shutdown);
                 modal_window.find('#table_node').text(JSON.stringify(node.table.metric, null, 4));
                 modal_window.find('#table_node_path').text(JSON.stringify(node.table.path, null, 4));
+
                 modal_window.find('#address_node').text(node.address);
                 $('#overlay_node').fadeIn(100, function () {
                     $('#modal_form_node')
@@ -199,6 +201,18 @@ function add_node() {
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         async: true,
+    });
+    location.reload();
+}
+function shutdown_node() {
+    var address = document.getElementById('shut_address').value;
+    $.ajax({
+        url: 'node/shutdown',
+        type: 'POST',
+        data: JSON.stringify({'address': address}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true
     });
     location.reload();
 }
@@ -365,8 +379,8 @@ function load_nodes() {
 }
 
 $(document).ready(function () {
-   // var network = $('#network').data('network');
-   // Generate(network);
+    // var network = $('#network').data('network');
+    // Generate(network);
 
     $('.dropdown-menu').on('click', function (event) {
         event.stopPropagation();

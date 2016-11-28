@@ -5,8 +5,13 @@ def find_node(id, network):
     return None
 
 
-def find_node_by_address(addr, network):
+def find_node_by_address(addr, network, mode=0):
     for i in network:
         if i.address == addr:
-            return i
+            if not mode:
+                if not i.shutdown:
+                    return i
+            else:
+                return i
     return None
+

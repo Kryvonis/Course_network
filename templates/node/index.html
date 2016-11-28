@@ -80,7 +80,34 @@
                 </div>
             </div>
         </div>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#ShutdownNodeModal">
+            Shutdown Node
+        </button>
 
+        <!-- Modal -->
+        <div class="modal fade" id="ShutdownNodeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="AddNodeModalLabel2">Shutdown node</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="add_node_address_span1">address</span>
+                            <input id="shut_address" type="text" class="form-control" placeholder="address"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" onclick="shutdown_node()">Shutdown</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--REGENERATE-->
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#RegenerateModal">
             Regenerate Nodes
@@ -332,6 +359,8 @@
     <span id="modal_close_node">X</span>
     <label>id</label>
     <p id="id_node"></p>
+    <label>Is shutdown</label>
+    <p id="shutdown"></p>
     <label>Metric</label>
     <p id="table_node"></p>
     <label>RouteTablePath</label>

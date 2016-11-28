@@ -5,7 +5,7 @@ from django.conf import settings
 
 from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
-
+from network.pkg.node.finder import find_node_by_address
 from network.pkg.node.creator import generate_randomly, generate_node
 from network.pkg.routing.finder import initialize, send_tables
 
@@ -44,10 +44,27 @@ def save_pos(request):
 
 def add_node(request):
     req = json.loads(request.body.decode('utf-8'))
-    print(reverse('index-node'))
+
     network['nodes'].append(
         generate_node((network['nodes'][-1].id + 1), req['address'])
     )
+    return HttpResponse(200)
+
+
+def shutdown_node(request):
+    req = json.loads(request.body.decode('utf-8'))
+    if req['address'].split('.')[1] != '0':
+        value = 1
+        node = find_node_by_address(req['address'], network['nodes'], mode=1)
+        if node.shutdown:
+            value = 0
+        for channel in node.channels:
+            channel.shutdown = value
+        node.shutdown = value
+        initialize(network['nodes'])
+        send_tables(network)
+    else:
+        return HttpResponse(400)
     return HttpResponse(200)
 
 

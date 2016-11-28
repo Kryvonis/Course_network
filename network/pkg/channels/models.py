@@ -9,7 +9,7 @@ import datetime
 class Channel:
     def __init__(self, id, start_node_id, end_node_id, weight,
                  type, start_node_buffer,
-                 end_node_buffer, is_busy, message_buffer, error_prob):
+                 end_node_buffer, is_busy, message_buffer, error_prob, shutdown=0):
         self.id = id
         self.weight = weight
         self.type = type
@@ -17,6 +17,7 @@ class Channel:
         self.start_node_id = start_node_id
         self.end_node_id = end_node_id
         self.message_buffer = message_buffer
+        self.shutdown = shutdown
         if not message_buffer:
             if self.type == 'duplex':
                 self.message_buffer['{}'.format(self.start_node_id)] = 0
@@ -121,8 +122,7 @@ class Channel:
         for key, msg in self.message_buffer.items():
             if msg:
                 if msg.delay <= 0:
-                    if self.__send_message(key, msg):
-                        self.add_to_buffer(key, generate_error_message(msg))
+                    self.__send_message(key, msg)
                     self.message_buffer[key] = 0
                 else:
                     msg.delay -= 1

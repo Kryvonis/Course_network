@@ -15,7 +15,7 @@ def generate_message(from_node, to_node, type_message, info_size, service_size=3
     return message
 
 
-def generate_error_message(msg):
+def generate_message(msg):
     return Message(datetime.datetime.now(),
                    msg.from_node,
                    msg.to_node,

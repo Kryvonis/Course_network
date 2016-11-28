@@ -23,6 +23,7 @@ class JSONChanelSerializer:
                 "start_node_buffer": JSONMessageSerializer.encode(obj.start_node_buffer),
                 "end_node_buffer": JSONMessageSerializer.encode(obj.end_node_buffer),
                 "is_busy": obj.is_busy,
+                "shutdown": obj.shutdown,
             }
 
     @classmethod
@@ -44,6 +45,7 @@ class JSONChanelSerializer:
                            JSONMessageSerializer.decode(obj['end_node_buffer']),
                            int(obj['is_busy']),
                            JSONMessageSerializer.decode(obj['message_buffer']),
-                           float(obj['error_prob']))
+                           float(obj['error_prob']),
+                           int(obj['shutdown']))
             # return 0
             # return Channel(**obj)

@@ -31,7 +31,10 @@ def connect_logic(buffer, current_node, channel, network):
     if not channel.is_busy:
         # create request and wait for response
         request = generate_request_to_connect(buffer[0])
-
+        statistic_table['0'].message_add(request)
+        mock_message = buffer[0].copy()
+        mock_message.data_size = 0
+        statistic_table['0'].message_delivered(mock_message)
         buffer.insert(0, request)
         send_message(buffer, current_node, channel, network)
 
@@ -49,17 +52,23 @@ def request_logic(buffer, current_node, channel, network):
     :return:
     """
     if buffer[0].to_node == current_node.address:
-        buffer[0].time = buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
+        buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
         statistic_table['0'].message_delivered(buffer[0])
+
         # generate response check some situation when channel can`t be
         response = generate_response_to_connect(buffer[0], '+')
         channel.is_busy = 1
+
         channel.remove_from_buffer(current_node.id, buffer[0])
         buffer.insert(0, response)
+        statistic_table['0'].message_add(buffer[0])
         send_message(buffer, current_node, channel, network)
     else:
         node_sender = find_node_by_address(buffer[0].from_node, network)
         node_getter = find_node_by_address(buffer[0].to_node, network)
+        print(node_sender)
+        print(node_getter)
+        print(current_node)
         next_node = find_node_by_address(get_next_node_path(node_sender, node_getter, current_node),
                                          network)
         next_step_node = find_node_by_address(get_next_node_path(next_node, node_getter, next_node),
@@ -73,6 +82,7 @@ def request_logic(buffer, current_node, channel, network):
                 response = generate_response_to_connect(buffer[0], '-')
                 channel.remove_from_buffer(current_node.id, buffer[0])
                 buffer.insert(0, response)
+                statistic_table['0'].message_add(buffer[0])
                 send_message(buffer, current_node, channel, network)
 
             else:
@@ -99,6 +109,7 @@ def response_plus_logic(buffer, current_node, channel, network):
         buffer.remove(buffer[0])
         channel.is_busy = 0
         buffer[0].type_message = 'data'
+        statistic_table['0'].message_add(buffer[0])
         send_message(buffer, current_node, channel, network)
         channel.is_busy = 1
     else:
@@ -116,6 +127,7 @@ def data_logic(buffer, current_node, channel, network):
     """
     if buffer[0].to_node == current_node.address:
         response = generate_response_to_connect(buffer[0], '_rel+')
+        statistic_table['0'].message_add(response)
         buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
         statistic_table['0'].message_delivered(buffer[0])
         buffer.remove(buffer[0])
@@ -221,7 +233,6 @@ def step(i, network, network_channels):
                 release_logic(buffer, current_node, channel, network)
                 continue
             if buffer[0].type_message == 'request':
-
                 request_logic(buffer, current_node, channel, network)
                 continue
             if buffer[0].type_message == 'response+':
