@@ -15,14 +15,14 @@ def generate_message(from_node, to_node, type_message, info_size, service_size=3
     return message
 
 
-def generate_message(msg):
-    return Message(datetime.datetime.now(),
-                   msg.from_node,
-                   msg.to_node,
-                   'error',
-                   msg.info_size,
-                   msg.service_size,
-                   msg.delay)
+# def generate_message(msg):
+#     return Message(datetime.datetime.now(),
+#                    msg.from_node,
+#                    msg.to_node,
+#                    'error',
+#                    msg.info_size,
+#                    msg.service_size,
+#                    msg.delay)
 
 
 def generate_message_json(from_node, to_node, type_message, info_size, service_size):

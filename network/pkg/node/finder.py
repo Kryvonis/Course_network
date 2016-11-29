@@ -8,7 +8,7 @@ def find_node(id, network):
 def find_node_by_address(addr, network, mode=0):
     for i in network:
         if i.address == addr:
-            if not mode:
+            if mode:
                 if not i.shutdown:
                     return i
             else:

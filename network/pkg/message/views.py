@@ -25,8 +25,6 @@ def send_message_in_datagram(request):
     message = generate_message(req['start_node_address'], req['end_node_address'], 'datagram', int(req['info_size']))
     add_message_in_datagram(message, network['nodes'])
 
-    print(statistic_table['0'].delivered_num)
-    print(statistic_table['0'].created_num)
     while statistic_table['0'].delivered_num < statistic_table['0'].created_num:
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1

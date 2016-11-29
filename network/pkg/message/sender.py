@@ -32,9 +32,9 @@ def connect_logic(buffer, current_node, channel, network):
         # create request and wait for response
         request = generate_request_to_connect(buffer[0])
         statistic_table['0'].message_add(request)
-        mock_message = buffer[0].copy()
-        mock_message.data_size = 0
-        statistic_table['0'].message_delivered(mock_message)
+        request.type_message = 'connect'
+        statistic_table['0'].message_delivered(request)
+        request = generate_request_to_connect(buffer[0])
         buffer.insert(0, request)
         send_message(buffer, current_node, channel, network)
 
@@ -77,7 +77,7 @@ def request_logic(buffer, current_node, channel, network):
             next_step_channel = find_channel(next_node.channels, next_node.id,
                                              next_step_node.id)
             if next_step_channel.is_busy:
-                buffer[0].time = buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
+                buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
                 statistic_table['0'].message_delivered(buffer[0])
                 response = generate_response_to_connect(buffer[0], '-')
                 channel.remove_from_buffer(current_node.id, buffer[0])
@@ -103,13 +103,16 @@ def response_plus_logic(buffer, current_node, channel, network):
     :return:
     """
     if buffer[0].to_node == current_node.address:
-        buffer[0].time = buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
+        buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
         statistic_table['0'].message_delivered(buffer[0])
 
         buffer.remove(buffer[0])
         channel.is_busy = 0
         buffer[0].type_message = 'data'
         statistic_table['0'].message_add(buffer[0])
+        ##
+        # NEED TO SPLIT FOR PACKETS
+        ##
         send_message(buffer, current_node, channel, network)
         channel.is_busy = 1
     else:
@@ -206,7 +209,7 @@ def response_minus_logic(buffer, current_node, channel, network):
     """
     if buffer[0].to_node == current_node.address:
         channel.is_busy = 0
-        buffer[0].time = buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
+        buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
         statistic_table['0'].message_delivered(buffer[0])
         buffer.remove(buffer[0])
     else:

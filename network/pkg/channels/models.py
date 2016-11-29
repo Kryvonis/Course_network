@@ -1,6 +1,6 @@
 # from django.db import models
 # Create your models here.
-from network.pkg.message.creator import generate_error_message
+
 from network.pkg.message.sender import statistic_table
 import random
 import datetime
@@ -94,7 +94,7 @@ class Channel:
         :param id: node id which sending
         :return: None
         """
-        msg.delay = int(msg.info_size / self.weight)
+        msg.delay = int(msg.info_size / (1 / self.weight))
         if self.type == 'duplex':
             self.message_buffer[str(id)] = msg
         else:
@@ -125,7 +125,7 @@ class Channel:
                     self.__send_message(key, msg)
                     self.message_buffer[key] = 0
                 else:
-                    msg.delay -= 1
+                    msg.delay -= self.weight * 1000
 
     # def send_from_buffer_to_channel(self, node_id):
     #     if self.can_send_message(node_id) and self.get_node_buffer(node_id):
