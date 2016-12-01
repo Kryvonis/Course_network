@@ -65,13 +65,13 @@ def generate_new_message(network):
         return message
 
 
-def split_messages_to_datagrams(message):
+def split_messages_to_datagrams(message,message_type):
     datagrams = []
     if message.info_size % 100 != 0:
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
-                                 'datagram',
+                                 message_type,
                                  message.info_size % 100,
                                  message.service_size,
                                  message.delay))
@@ -80,7 +80,7 @@ def split_messages_to_datagrams(message):
         datagrams.append(Message(message.time,
                                  message.from_node,
                                  message.to_node,
-                                 'datagram',
+                                 message_type,
                                  100,
                                  message.service_size,
                                  message.delay))

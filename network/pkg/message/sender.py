@@ -13,6 +13,7 @@ def set_statistic_table(stat_tbl):
 
 def datagram_logic(buffer, current_node, channel, network):
     if buffer[0].to_node == current_node.address:
+        buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
         message_delivered(channel, buffer[0], current_node)
         # return
     else:
@@ -31,10 +32,11 @@ def connect_logic(buffer, current_node, channel, network):
     if not channel.is_busy:
         # create request and wait for response
         request = generate_request_to_connect(buffer[0])
-        statistic_table['0'].message_add(request)
         request.type_message = 'connect'
+        request.time = (datetime.datetime.now() - buffer[0].time).microseconds
         statistic_table['0'].message_delivered(request)
         request = generate_request_to_connect(buffer[0])
+        statistic_table['0'].message_add(request)
         buffer.insert(0, request)
         send_message(buffer, current_node, channel, network)
 
@@ -108,12 +110,23 @@ def response_plus_logic(buffer, current_node, channel, network):
 
         buffer.remove(buffer[0])
         channel.is_busy = 0
-        buffer[0].type_message = 'data'
-        statistic_table['0'].message_add(buffer[0])
-        ##
-        # NEED TO SPLIT FOR PACKETS
-        ##
-        send_message(buffer, current_node, channel, network)
+        packets = split_messages_to_datagrams(buffer[0], 'data')
+        buffer.remove(buffer[0])
+        for i in packets:
+            channel.add_to_buffer(current_node.id, i)
+            ##
+            # Comment about TIME, need to count or save previously
+            ##
+            statistic_table['0'].add_row('create new connect pocket message with data size {}'.format(i.info_size),
+                                         i.from_node,
+                                         i.to_node,
+                                         datetime.datetime.now().microsecond
+                                         )
+            statistic_table['0'].message_add(i)
+        # buffer[0].type_message = 'data'
+        # statistic_table['0'].message_add(buffer[0])
+
+        send_message(packets, current_node, channel, network)
         channel.is_busy = 1
     else:
         send_message(buffer, current_node, channel, network)
@@ -132,8 +145,9 @@ def data_logic(buffer, current_node, channel, network):
         response = generate_response_to_connect(buffer[0], '_rel+')
         statistic_table['0'].message_add(response)
         buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
-        statistic_table['0'].message_delivered(buffer[0])
-        buffer.remove(buffer[0])
+        # statistic_table['0'].message_delivered(buffer[0])
+        message_delivered(channel, buffer[0], current_node)
+
         buffer.insert(0, response)
         send_message(buffer, current_node, channel, network)
         channel.is_busy = 0
@@ -145,7 +159,7 @@ def data_logic(buffer, current_node, channel, network):
 
 def release_logic(buffer, current_node, channel, network):
     """
-    if we get data message need to generate response for releasing channel
+    if we get response_rel+ message need to release channel
     :param buffer:
     :param current_node:
     :param channel:
@@ -290,7 +304,7 @@ def add_message_in_datagram(message, network):
 
     message.time = datetime.datetime.now()
 
-    datagrams = split_messages_to_datagrams(message)
+    datagrams = split_messages_to_datagrams(message, 'datagram')
     for i in datagrams:
         channes_sender.add_to_buffer(node_sender.id, i)
         statistic_table['0'].add_row('create new datagram message with data size {}'.format(i.info_size),
@@ -327,7 +341,7 @@ def add_message_in_connect(message, network):
 
 
 def message_delivered(channel, message, current_node):
-    message.time = (datetime.datetime.now() - message.time).microseconds
+
     statistic_table['0'].add_row(
         'read message [type:{};size:{};service size{};delivered time:{};]'.
             format(message.type_message, message.info_size,

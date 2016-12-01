@@ -58,6 +58,8 @@ def next_iteration(request):
 
 
 def run(request):
+    statistic_table['0'] = StatisticTable()
+    set_statistic_table(statistic_table['0'])
     req = json.loads(request.body.decode('utf-8'))
     for i in range(int(req['need'])):
         # generate randomly new message
@@ -66,6 +68,8 @@ def run(request):
             add_message_in_datagram(message, network['nodes'])
         if message and message.type_message == 'connect':
             add_message_in_connect(message, network['nodes'])
+
+    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_num:
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
