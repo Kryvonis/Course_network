@@ -1,5 +1,6 @@
 from django.shortcuts import render, reverse
 from network.pkg.node.views import network
+from network.pkg.routing.finder import initialize_short_path
 from django.http import HttpResponsePermanentRedirect
 from network.pkg.channels.creator import generate_channel
 import json
@@ -19,7 +20,7 @@ def add_channel(request):
                                    int(req['start_node_id']),
                                    int(req['end_node_id']),
                                    req['channel_type'],
-                                   req['weight'],
+                                   int(req['weight']),
                                    )
     network['channels'].append(channel_add)
     for node in network['nodes']:
@@ -27,7 +28,7 @@ def add_channel(request):
             node.channels.append(channel_add)
         if node.id == int(req['end_node_id']):
             node.channels.append(channel_add)
-
+    initialize_short_path(network['nodes'])
     return HttpResponsePermanentRedirect(reverse('index-node'))
 
 

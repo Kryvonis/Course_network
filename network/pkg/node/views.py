@@ -7,7 +7,7 @@ from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.node.creator import generate_randomly, generate_node
-from network.pkg.routing.finder import initialize, send_tables
+from network.pkg.routing.finder import initialize_short_path, send_tables
 
 import json
 import os
@@ -15,7 +15,7 @@ import os
 network = {}
 
 network['nodes'], network['channels'] = generate_randomly(2, 1)
-initialize(network['nodes'])
+initialize_short_path(network['nodes'])
 send_tables(network)
 
 
@@ -61,7 +61,7 @@ def shutdown_node(request):
         for channel in node.channels:
             channel.shutdown = value
         node.shutdown = value
-        initialize(network['nodes'])
+        initialize_short_path(network['nodes'])
         send_tables(network)
     else:
         return HttpResponse(400)
@@ -71,7 +71,7 @@ def shutdown_node(request):
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
     network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
-    initialize(network['nodes'])
+    initialize_short_path(network['nodes'])
     return HttpResponse(200)
 
 

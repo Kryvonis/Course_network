@@ -68,9 +68,6 @@ def request_logic(buffer, current_node, channel, network):
     else:
         node_sender = find_node_by_address(buffer[0].from_node, network)
         node_getter = find_node_by_address(buffer[0].to_node, network)
-        print(node_sender)
-        print(node_getter)
-        print(current_node)
         next_node = find_node_by_address(get_next_node_path(node_sender, node_getter, current_node),
                                          network)
         next_step_node = find_node_by_address(get_next_node_path(next_node, node_getter, next_node),

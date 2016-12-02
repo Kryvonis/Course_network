@@ -53,15 +53,7 @@ def dijkstra(nodes, concrete_node, network):
                         neibor_path[conc_node.address] + ',' + str(find_node(neibor_id, network).address)
                     nodes_weight[find_node(neibor_id, network).address] = \
                         channel.weight + nodes_weight[conc_node.address]
-                    # print('channel id = {}'.format(neibor_id))
-                    # print('channel_weight = {}'.format(channel.weight))
-                    # print('nodes_weight = {}'.format(nodes_weight))
-                    # print('neibor_path = {}'.format(neibor_path))
-
-        # print('neibors = {}'.format(neibors))
         min = inf
-
-        # print('deleted_nodes = {}'.format(deleted_nodes))
         deleted_nodes.append(conc_node.address)
 
         for key, value in nodes_weight.items():
@@ -69,20 +61,20 @@ def dijkstra(nodes, concrete_node, network):
                         key.split('.')[0] == marked_node.address.split('.')[0]):
                 conc_node = find_node_by_address(key, network)
                 min = value
-
-                # print('=====')
     neibor_path[marked_node.address] = '-'
     table = RouteTable(nodes_weight, neibor_path)
-    # print(nodes_weight)
     marked_node.table = table
-    # print('neibor_path = {}'.format(neibor_path))
 
 
-def initialize(network):
+def initialize_node_path(network, channels):
     region1 = []
     region2 = []
     main_node_1 = 0
     main_node_2 = 1
+    tmp_channels_weight = []
+    for channel in channels:
+        tmp_channels_weight.append(channel.weight)
+        channel.weight = 1
     for node in network:
         if not node.shutdown:
             if node.address.split('.')[0] == '0':
@@ -116,8 +108,52 @@ def initialize(network):
     dijkstra(region1, main_node_1.id, network)
     dijkstra(region2, main_node_2.id, network)
 
+    for i, channel in iter(channels):
+        channel.weight = tmp_channels_weight[i]
+
     network = region1 + region2
-    # print(network)
+
+
+def initialize_short_path(network):
+    region1 = []
+    region2 = []
+    main_node_1 = 0
+    main_node_2 = 1
+    for node in network:
+        if not node.shutdown:
+            if node.address.split('.')[0] == '0':
+                if node.address.split('.')[1] == '0':
+                    main_node_1 = node
+                region1.append(node)
+            if node.address.split('.')[0] == '1':
+                if node.address.split('.')[1] == '0':
+                    main_node_2 = node
+                region2.append(node)
+    main_channel = find_channel(main_node_1.channels, main_node_1.id, main_node_2.id)
+    t = region1[region1.index(main_node_1)].channels
+    t.pop(t.index(main_channel))
+
+    t = region2[region2.index(main_node_2)].channels
+    t.pop(t.index(main_channel))
+    # for channel in chann
+    for node in region1:
+        if node.address == '0.0':
+            continue
+        dijkstra(region1, node.id, network)
+    for node in region2:
+        if node.address == '1.0':
+            continue
+        dijkstra(region2, node.id, network)
+    t = region2[region2.index(main_node_2)].channels
+    t.append(main_channel)
+
+    t = region1[region1.index(main_node_1)].channels
+    t.append(main_channel)
+
+    dijkstra(region1, main_node_1.id, network)
+    dijkstra(region2, main_node_2.id, network)
+
+    network = region1 + region2
 
 
 def send_tables(network):

@@ -40,7 +40,7 @@ def send_message_in_connect(request):
     message = generate_message(req['start_node_address'], req['end_node_address'], 'connect', int(req['info_size']))
     add_message_in_connect(message, network['nodes'])
     # statistic_table.delivered_num
-    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_num:
+    while statistic_table['0'].delivered_num < statistic_table['0'].created_num:
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
@@ -69,9 +69,23 @@ def run(request):
         if message and message.type_message == 'connect':
             add_message_in_connect(message, network['nodes'])
 
-    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_num:
+    while statistic_table['0'].created_data_num < int(req['need']):
+
+        message = generate_new_message(network)
+        if message and message.type_message == 'datagram':
+            add_message_in_datagram(message, network['nodes'])
+        if message and message.type_message == 'connect':
+            add_message_in_connect(message, network['nodes'])
+
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
             iter_node['i'] = 0
+
+    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_data_num:
+        step(iter_node['i'], network['nodes'], network['channels'])
+        iter_node['i'] += 1
+        if iter_node['i'] == len(network['nodes']):
+            iter_node['i'] = 0
+
     return HttpResponse(200)

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from network.pkg.routing.finder import initialize
+from network.pkg.routing.finder import initialize_short_path
 from network.pkg.node.creator import generate_randomly
 
 

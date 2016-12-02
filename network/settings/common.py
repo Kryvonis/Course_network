@@ -121,6 +121,7 @@ USE_TZ = True
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static') ]
 STATIC_URL = '/static/'
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 if 'test' in sys.argv:
     DATABASES['default'] = {

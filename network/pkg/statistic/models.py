@@ -9,8 +9,10 @@ class StatisticTable:
         self.created_message = []
         self.delivered_message = []
         self.delivered_data_message = []
+        self.created_data_message = []
         self.delivered_data_num = 0
         self.created_num = len(self.created_message)
+        self.created_data_num = len(self.created_message)
         self.delivered_num = len(self.delivered_message)
         self.avrg_time = 0
         self.all_data_size = 0
@@ -22,6 +24,9 @@ class StatisticTable:
 
     def message_add(self, msg):
         self.created_message.append(msg)
+        if 'data' in msg.type_message:
+            self.created_data_message.append(msg)
+            self.created_data_num = len(self.delivered_data_message)
         self.created_num = len(self.created_message)
 
     def message_delivered(self, msg):
@@ -45,7 +50,3 @@ class StatisticTable:
             self.avrg_time /= self.delivered_num
         except ZeroDivisionError:
             self.avrg_time = 0
-
-    def show(self):
-        for i in self.rows:
-            print('{}\n{} -> {}\n{}\n'.format(i['row_type'], i['from_node'], i['to_node'], i['time']))
