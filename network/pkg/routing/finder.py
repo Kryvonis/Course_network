@@ -108,7 +108,7 @@ def initialize_node_path(network, channels):
     dijkstra(region1, main_node_1.id, network)
     dijkstra(region2, main_node_2.id, network)
 
-    for i, channel in iter(channels):
+    for i, channel in enumerate(channels):
         channel.weight = tmp_channels_weight[i]
 
     network = region1 + region2
@@ -164,16 +164,16 @@ def send_tables(network):
     for node in range(1, int(len(network['nodes']) / 2)):
         send_node = find_node_by_address('0.' + str(node), network['nodes'])
         if send_node:
-            add_message_in_connect(generate_message(main_node_1.address, send_node.address, 'connect', 128),
+            add_message_in_datagram(generate_message(main_node_1.address, send_node.address, 'datagram', 128),
                                    network['nodes'])
 
     for node in range(1, int(len(network['nodes']) / 2)):
         send_node = find_node_by_address('1.' + str(node), network['nodes'])
         if send_node:
-            add_message_in_connect(generate_message(main_node_2.address, send_node.address, 'connect', 128),
+            add_message_in_datagram(generate_message(main_node_2.address, send_node.address, 'datagram', 128),
                                    network['nodes'])
 
-    while statistic_table['0'].delivered_num < (statistic_table['0'].created_num):
+    while statistic_table['0'].delivered_data_num < (statistic_table['0'].created_data_num):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):

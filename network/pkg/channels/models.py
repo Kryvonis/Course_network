@@ -47,12 +47,12 @@ class Channel:
         :return: None
         """
         if id == self.start_node_id:
-            if 'response' in msg.type_message:
+            if ('response' in msg.type_message):
                 self.start_node_buffer.insert(0, msg)
             else:
                 self.start_node_buffer.append(msg)
         else:
-            if 'response' in msg.type_message:
+            if ('response' in msg.type_message):
                 self.end_node_buffer.insert(0, msg)
             else:
                 self.end_node_buffer.append(msg)
@@ -94,7 +94,7 @@ class Channel:
         :param id: node id which sending
         :return: None
         """
-        msg.delay = int(msg.info_size / (1 / self.weight))
+        msg.delay = int(msg.info_size / (200 / self.weight))
         if self.type == 'duplex':
             self.message_buffer[str(id)] = msg
         else:
@@ -125,7 +125,7 @@ class Channel:
                     self.__send_message(key, msg)
                     self.message_buffer[key] = 0
                 else:
-                    msg.delay -= self.weight * 1000
+                    msg.delay -= 1
 
     # def send_from_buffer_to_channel(self, node_id):
     #     if self.can_send_message(node_id) and self.get_node_buffer(node_id):
@@ -139,27 +139,23 @@ class Channel:
         """
         if random.random() > self.error_prob:
             if int(key) == self.end_node_id:
-                if 'response' in msg.type_message:
+                if ('response' in msg.type_message) or ('data' in msg.type_message):
                     self.start_node_buffer.insert(0, msg)
                 else:
                     self.start_node_buffer.append(msg)
             else:
-                if 'response' in msg.type_message:
+                if ('response' in msg.type_message) or ('data' in msg.type_message):
                     self.end_node_buffer.insert(0, msg)
                 else:
                     self.end_node_buffer.append(msg)
             return False
         else:
             statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
-            print('DROPED')
-            if msg.type_message == 'datagram':
-                msg.time = (datetime.datetime.now() - msg.time).microseconds
-                msg.info_size = 0
-                msg.service_size = 0
-                statistic_table['0'].message_delivered(msg)
-                return False
+            # self.add_to_buffer(key, msg)
+            if key == self.start_node_id:
+                self.start_node_buffer.insert(0, msg)
             else:
-                self.add_to_buffer(key, msg)
+                self.end_node_buffer.insert(0, msg)
             return True
 
     # def get_message_from_channel(self, position):

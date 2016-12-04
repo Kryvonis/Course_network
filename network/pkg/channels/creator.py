@@ -11,6 +11,7 @@ def generate_channel(id, start_node, end_node, channel_type=0, weight=0):
     start_node_buffer = []
     end_node_buffer = []
     is_busy = 0
+    is_busy_for_what = 0
     message_buffer = {}
     if not weight:
         weight = random.choice(weights)

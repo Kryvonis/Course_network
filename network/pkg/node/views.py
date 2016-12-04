@@ -7,16 +7,17 @@ from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.node.creator import generate_randomly, generate_node
-from network.pkg.routing.finder import initialize_short_path, send_tables
+from network.pkg.routing.finder import initialize_short_path, send_tables, initialize_node_path
 
 import json
 import os
 
 network = {}
 
-network['nodes'], network['channels'] = generate_randomly(2, 1)
-initialize_short_path(network['nodes'])
-send_tables(network)
+network['nodes'], network['channels'] = generate_randomly(12, 4)
+network['type'] = 'path'
+# initialize_short_path(network['nodes'])
+# send_tables(network)
 
 
 @ensure_csrf_cookie
@@ -27,6 +28,16 @@ def index(request):
                                        }
                            }
                   )
+
+
+def init_nodes(request, type):
+    network['type'] = type
+    if type == 'path':
+        initialize_short_path(network['nodes'])
+    else:
+        initialize_node_path(network['nodes'],network['channels'])
+    # send_tables(network)
+    return HttpResponse(200)
 
 
 def save_pos(request):
@@ -61,7 +72,10 @@ def shutdown_node(request):
         for channel in node.channels:
             channel.shutdown = value
         node.shutdown = value
-        initialize_short_path(network['nodes'])
+        if network['type'] == 'path':
+            initialize_short_path(network['nodes'])
+        else:
+            initialize_node_path(network['nodes'], network['channels'])
         send_tables(network)
     else:
         return HttpResponse(400)
@@ -71,7 +85,7 @@ def shutdown_node(request):
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
     network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
-    initialize_short_path(network['nodes'])
+    # initialize_short_path(network['nodes'])
     return HttpResponse(200)
 
 

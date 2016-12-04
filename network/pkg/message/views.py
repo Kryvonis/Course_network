@@ -5,8 +5,9 @@ from network.pkg.message.creator import generate_message, generate_new_message
 from network.pkg.message.sender import add_message_in_datagram, add_message_in_connect, step, set_statistic_table
 from network.pkg.node.views import network
 from network.pkg.statistic.models import StatisticTable
-
+from network.settings.common import SPLITED_SIZE
 import json
+import math
 
 iter_node = {'i': 0}
 iter_number = 100000
@@ -17,6 +18,16 @@ set_statistic_table(statistic_table['0'])
 # STATISTIC_TABLE = StatisticTable()
 
 # Create your views here.
+def has_messages(channels):
+    for channel in channels:
+        if channel.end_node_buffer:
+            return True
+        if channel.start_node_buffer:
+            return True
+        for key, msg in channel.message_buffer.items():
+            if msg:
+                return True
+
 
 def send_message_in_datagram(request):
     statistic_table['0'] = StatisticTable()
@@ -49,29 +60,23 @@ def send_message_in_connect(request):
 
 
 def next_iteration(request):
-    step(iter_node['i'], network['nodes'], network['channels'])
-    iter_node['i'] += 1
-    if iter_node['i'] == len(network['nodes']):
-        iter_node['i'] = 0
+    for i in range(len(network['nodes'])):
+        step(iter_node['i'], network['nodes'], network['channels'])
+        iter_node['i'] += 1
+        if iter_node['i'] == len(network['nodes']):
+            iter_node['i'] = 0
     return HttpResponse(200)
     # statistic_table.show()
 
 
-def run(request):
+def run(request, type):
     statistic_table['0'] = StatisticTable()
     set_statistic_table(statistic_table['0'])
     req = json.loads(request.body.decode('utf-8'))
-    for i in range(int(req['need'])):
-        # generate randomly new message
-        message = generate_new_message(network)
-        if message and message.type_message == 'datagram':
-            add_message_in_datagram(message, network['nodes'])
-        if message and message.type_message == 'connect':
-            add_message_in_connect(message, network['nodes'])
 
-    while statistic_table['0'].created_data_num < int(req['need']):
+    while statistic_table['0'].created_data_num < int(req['need']) * math.ceil(int(req['info_size']) / SPLITED_SIZE):
 
-        message = generate_new_message(network)
+        message = generate_new_message(network, type, int(req['info_size']))
         if message and message.type_message == 'datagram':
             add_message_in_datagram(message, network['nodes'])
         if message and message.type_message == 'connect':
@@ -82,7 +87,7 @@ def run(request):
         if iter_node['i'] == len(network['nodes']):
             iter_node['i'] = 0
 
-    while statistic_table['0'].delivered_data_num < statistic_table['0'].created_data_num:
+    while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):

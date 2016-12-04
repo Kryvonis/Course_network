@@ -191,6 +191,30 @@ function close_modal_window_node() {
         }
     );
 }
+function init_nodes() {
+    var address = document.getElementById('add_node_address').value;
+    $.ajax({
+        url: 'node/init/nodes',
+        type: 'POST',
+        data: JSON.stringify({'address': address}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true
+    });
+    location.reload();
+}
+function init_path() {
+    var address = document.getElementById('add_node_address').value;
+    $.ajax({
+        url: 'node/init/path',
+        type: 'POST',
+        data: JSON.stringify({'address': address}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true
+    });
+    location.reload();
+}
 
 function add_node() {
     var address = document.getElementById('add_node_address').value;
@@ -200,7 +224,7 @@ function add_node() {
         data: JSON.stringify({'address': address}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
     location.reload();
 }
@@ -223,7 +247,7 @@ function save_network_state() {
         data: JSON.stringify(network),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: false,
+        async: false
     });
 }
 function remove_node() {
@@ -235,7 +259,7 @@ function remove_node() {
         data: JSON.stringify(id),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
 }
 function check_weight(weight) {
@@ -280,7 +304,7 @@ function remove_channel() {
         data: JSON.stringify({'start_node_id': start_node_id, 'end_node_id': end_node_id}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
 }
 function regenerate() {
@@ -292,7 +316,7 @@ function regenerate() {
         data: JSON.stringify({'average_nums': average_nums_id, 'node_nums': node_nums_id}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
     location.reload();
 }
@@ -328,7 +352,7 @@ function send_connect() {
         }),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
 }
 function next_step() {
@@ -345,13 +369,16 @@ function next_step() {
 }
 function run() {
     var how_much = document.getElementById('how_much_id').value;
+    var msh_type = document.getElementById('what_type_id').value;
+    var info_size = document.getElementById('info_size_id').value;
+    var url = 'message/run/' + msh_type;
     $.ajax({
-        url: 'message/run',
+        url: url,
         type: 'POST',
-        data: JSON.stringify({'need': how_much}),
+        data: JSON.stringify({'need': how_much, 'info_size': info_size}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true
+        async: false
     });
     location.reload();
 }
@@ -362,7 +389,7 @@ function save_nodes() {
         data: JSON.stringify({'filename': "dump.json"}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
     location.reload();
 }
@@ -373,7 +400,7 @@ function load_nodes() {
         data: JSON.stringify({'filename': "dump.json"}),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        async: true,
+        async: true
     });
     location.reload();
 }

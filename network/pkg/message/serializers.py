@@ -20,13 +20,13 @@ class JSONMessageSerializer:
             return messages
         if isinstance(obj, Message):
             return {'id': obj.id,
-                    'time': json.dumps(obj.time.isoformat()),
+                    'time': json.dumps(obj.time),
                     'from_node': obj.from_node,
                     'to_node': obj.to_node,
                     'type_message': obj.type_message,
                     'info_size': obj.info_size,
                     'service_size': obj.service_size,
-                    'delay':obj.delay,
+                    'delay': obj.delay,
                     }
 
     @classmethod
@@ -40,7 +40,7 @@ class JSONMessageSerializer:
 
             if obj:
                 obj['time'] = json.loads(obj['time'])
-                obj['time'] = datetime.datetime.strptime(obj['time']+'Z',"%Y-%m-%dT%H:%M:%S.%fZ")
+                obj['time'] = datetime.datetime.strptime(obj['time'] + 'Z', "%Y-%m-%dT%H:%M:%S.%fZ")
                 message = Message(obj['time'],
                                   obj['from_node'],
                                   obj['to_node'],

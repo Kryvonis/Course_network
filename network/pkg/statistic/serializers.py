@@ -6,10 +6,18 @@ class JSONStatisticTableSerializer:
     @classmethod
     def encode(cls, o):
         if isinstance(o, StatisticTable):
-            attr = {'rows': o.rows,
-                    'avrg_time': o.avrg_time,
-                    'all_data_size': o.all_data_size,
-                    'all_service_size': o.all_service_size}
+
+            attr = {
+                'total_send': o.created_num,
+                'total_received': o.delivered_num,
+                'total_data_received': o.delivered_data_num,
+                'avrg_time': o.avrg_time,
+                'avrg_data_time': o.avrg_data_time,
+                'all_data_size': o.all_data_size,
+                'all_service_size': o.all_service_size,
+                'rows': o.rows,
+
+            }
             return attr
         if isinstance(o, list):
             nodes = []

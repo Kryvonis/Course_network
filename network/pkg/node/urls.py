@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^load$', view=views.load, name='load-node-json'),
     url(r'^save$', view=views.save_pos, name='save'),
     url(r'^node/remove/(?P<id>[0-9]+)$', view=views.remove_node, name='remove-node'),
+    url(r'^node/init/(?P<type>[0-9A-Za-z]+)$', view=views.init_nodes, name='init-node'),
 
 ]

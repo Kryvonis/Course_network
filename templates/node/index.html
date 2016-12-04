@@ -24,6 +24,8 @@
 <div>
     <!--NODES-->
     <div>
+        <button type="button" class="btn btn-success" onclick="init_nodes()">Node init</button>
+        <button type="button" class="btn btn-success" onclick="init_path()">Node path init</button>
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#AddNodeModal">
             Add Node
@@ -124,7 +126,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="input-group">
-                            <span class="input-group-addon" id="node_nums">num</span>
+                            <span class="input-group-addon" id="node_nums">Node Nums</span>
                             <input id="node_nums_id" type="text" class="form-control" placeholder="num"
                                    aria-describedby="basic-addon1">
                             <span class="input-group-addon" id="average_nums">average num</span>
@@ -257,7 +259,7 @@
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-5">Size</span>
+                            <span class="input-group-addon" id="basic-5">Size (Mbit)</span>
                             <input id="datagram_info_size_id" type="text" class="form-control"
                                    placeholder="information size"
                                    aria-describedby="basic-addon1">
@@ -296,7 +298,7 @@
                                    aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-8">Size</span>
+                            <span class="input-group-addon" id="basic-8">Size (Mbit)</span>
                             <input id="connect_info_size_id" type="text" class="form-control"
                                    placeholder="information size"
                                    aria-describedby="basic-addon1">
@@ -328,8 +330,19 @@
                     </div>
                     <div class="modal-body">
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-0">how_much_messages</span>
+                            <span class="input-group-addon" id="basic-0">how_much_messages (Num)</span>
                             <input id="how_much_id" type="text" class="form-control" placeholder="how much"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-12">type of message (Type)</span>
+                            <input id="what_type_id" type="text" class="form-control" placeholder="connect/datagram"
+                                   aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-13">Size (Mbit)</span>
+                            <input id="info_size_id" type="text" class="form-control"
+                                   placeholder="information size"
                                    aria-describedby="basic-addon1">
                         </div>
                     </div>
@@ -343,6 +356,8 @@
         <!---->
     </div>
 </div>
+
+<canvas id="MainCanvas" width="2000" height="1000"></canvas>
 <!--Modal for channel-->
 <div id="modal_form">
     <span id="modal_close">X</span>
@@ -369,8 +384,6 @@
     <p id="address_node"></p>
 </div>
 <div id="overlay_node"></div><!-- Пoдлoжкa -->
-
-<canvas id="MainCanvas" width="2000" height="1000"></canvas>
 </body>
 
 

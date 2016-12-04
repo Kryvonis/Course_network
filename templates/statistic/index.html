@@ -22,12 +22,20 @@
 <body>
 <table class="table">
     <tr>
-        <th>Average Time</th>
-        <th>All Data Size</th>
-        <th>All Service Data Size</th>
+        <th>Total sended message (Num)</th>
+        <th>Total received message (Num)</th>
+        <th>Total info received message (Num)</th>
+        <th>Average Time (ms)</th>
+        <th>Average Info Time (ms)</th>
+        <th>All Data Size (Mbit)</th>
+        <th>All Service Data Size (Mbit)</th>
     </tr>
         <tr>
+            <td>{{ statistic.total_send }}</td>
+            <td>{{ statistic.total_received }}</td>
+            <td>{{ statistic.total_data_received }}</td>
             <td>{{ statistic.avrg_time }}</td>
+            <td>{{ statistic.avrg_data_time }}</td>
             <td>{{ statistic.all_data_size }}</td>
             <td>{{ statistic.all_service_size }}</td>
         </tr>
