@@ -24,6 +24,13 @@ class StatisticTable:
         self.rows.append({'row_type': row_type, 'from_node': from_node,
                           'to_node': to_node, 'time': time})
 
+    def message_connect_created_num(self):
+        num = 0
+        for i in self.created_message:
+            if i.type_message == 'connect':
+                num += 1
+        return num
+
     def message_add(self, msg):
         self.created_message.append(msg)
         if ('data' in msg.type_message):

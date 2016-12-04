@@ -51,7 +51,7 @@ def send_message_in_connect(request):
     message = generate_message(req['start_node_address'], req['end_node_address'], 'connect', int(req['info_size']))
     add_message_in_connect(message, network['nodes'])
     # statistic_table.delivered_num
-    while statistic_table['0'].delivered_num < statistic_table['0'].created_num:
+    while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
@@ -73,20 +73,33 @@ def run(request, type):
     statistic_table['0'] = StatisticTable()
     set_statistic_table(statistic_table['0'])
     req = json.loads(request.body.decode('utf-8'))
+    if type == 'datagram':
+        while statistic_table['0'].created_data_num < int(req['need']) * math.ceil(
+                        int(req['info_size']) / SPLITED_SIZE):
 
-    while statistic_table['0'].created_data_num < int(req['need']) * math.ceil(int(req['info_size']) / SPLITED_SIZE):
+            message = generate_new_message(network, type, int(req['info_size']))
+            if message and message.type_message == 'datagram':
+                add_message_in_datagram(message, network['nodes'])
+            if message and message.type_message == 'connect':
+                add_message_in_connect(message, network['nodes'])
 
-        message = generate_new_message(network, type, int(req['info_size']))
-        if message and message.type_message == 'datagram':
-            add_message_in_datagram(message, network['nodes'])
-        if message and message.type_message == 'connect':
-            add_message_in_connect(message, network['nodes'])
+            step(iter_node['i'], network['nodes'], network['channels'])
+            iter_node['i'] += 1
+            if iter_node['i'] == len(network['nodes']):
+                iter_node['i'] = 0
+    if type == 'connect':
+        while statistic_table['0'].message_connect_created_num() < int(req['need']):
 
-        step(iter_node['i'], network['nodes'], network['channels'])
-        iter_node['i'] += 1
-        if iter_node['i'] == len(network['nodes']):
-            iter_node['i'] = 0
+            message = generate_new_message(network, type, int(req['info_size']))
+            if message and message.type_message == 'datagram':
+                add_message_in_datagram(message, network['nodes'])
+            if message and message.type_message == 'connect':
+                add_message_in_connect(message, network['nodes'])
 
+            step(iter_node['i'], network['nodes'], network['channels'])
+            iter_node['i'] += 1
+            if iter_node['i'] == len(network['nodes']):
+                iter_node['i'] = 0
     while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1

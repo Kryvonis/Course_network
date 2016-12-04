@@ -121,25 +121,27 @@ def request_logic(buffer, current_node, channel, network):
         # next_step_node = find_node_by_address(get_next_node_path(node_sender, node_getter, next_node),
         #                                       network)
         # if next_step_node and next_step_node != next_node:
-        next_step_channel = find_channel(next_node.channels, current_node.id,
+        next_step_channel = find_channel(current_node.channels, current_node.id,
                                          next_node.id)
         if next_step_channel and next_step_channel.is_busy:
             # buffer[0].time = (datetime.datetime.now() - buffer[0].time).microseconds
 
             response = generate_response_to_connect(buffer[0], '-')
-            # statistic_table['0'].message_delivered(buffer[0])
-            # channel.remove_from_buffer(current_node.id, buffer[0])
-            # buffer.insert(0, response)
-            # channel.is_busy = 0
+            statistic_table['0'].message_delivered(buffer[0])
+            channel.remove_from_buffer(current_node.id, buffer[0])
+            buffer.insert(0, response)
             statistic_table['0'].message_add(response)
-            # send_message(buffer, current_node, channel, network)
+            flag, tmp_channel = send_message(buffer, current_node, channel, network)
+            if flag:
+                tmp_channel.is_busy = 0
         else:
-            send_message(buffer, current_node, channel, network)
-            channel.is_busy = 1
-            # else:
-            #     channel.is_busy = 0
-            #     send_message(buffer, current_node, channel, network)
-            #     channel.is_busy = 1
+            flag, tmp_channel = send_message(buffer, current_node, channel, network)
+            if flag:
+                tmp_channel.is_busy = 1
+                # else:
+                #     channel.is_busy = 0
+                #     send_message(buffer, current_node, channel, network)
+                #     channel.is_busy = 1
 
 
 def response_plus_logic(buffer, current_node, channel, network):
@@ -161,24 +163,26 @@ def response_plus_logic(buffer, current_node, channel, network):
         )
         buffer.remove(buffer[0])  # remove from buffer "response+"
         # channel.is_busy = 1
-        # packets = split_messages_to_datagrams(buffer[0], 'data')
-        # packets[0].type_message = 'data_last'
-        # buffer.remove(buffer[0])  # remove from buffer "connect"
-        # for i in packets:
-        #     channel.add_to_buffer(current_node.id, i)
-        #     ##
-        #     # Comment about TIME, need to count or save previously
-        #     ##
-        #     statistic_table['0'].add_row('create new connect pocket message with data size {}'.format(i.info_size),
-        #                                  i.from_node,
-        #                                  i.to_node,
-        #                                  datetime.datetime.now().microsecond
-        #                                  )
-        #     statistic_table['0'].message_add(i)
+        packets = split_messages_to_datagrams(buffer[0], 'data')
+        packets[0].type_message = 'data_last'
+        buffer.remove(buffer[0])  # remove from buffer "connect"
+        for i in packets:
+            buffer.insert(0, i)
+            # channel.add_to_buffer(current_node.id, i)
+            #     ##
+            #     # Comment about TIME, need to count or save previously
+            #     ##
+            statistic_table['0'].add_row('create new connect pocket message with data size {}'.format(i.info_size),
+                                         i.from_node,
+                                         i.to_node,
+                                         datetime.datetime.now().microsecond
+                                         )
+            statistic_table['0'].message_add(i)
         # # buffer[0].type_message = 'data'
         # # statistic_table['0'].message_add(buffer[0])
         #
-        # send_message(buffer, current_node, channel, network)
+        # ПОправити якщо це дата месетджи і канал установлено то тоді відправляти
+        send_message(buffer, current_node, channel, network)
         # channel.is_busy = 1
     else:
         send_message(buffer, current_node, channel, network)
@@ -207,10 +211,13 @@ def data_logic(buffer, current_node, channel, network):
             #     'from_node': buffer[0].to_node,
             # }
             # establish_connections.pop(establish_connections.index(check_establish))
-            channel.is_busy = 0
+
             buffer.insert(0, response)
             statistic_table['0'].message_add(response)
-            send_message(buffer, current_node, channel, network)
+            flag, tmp_channel = send_message(buffer, current_node, channel, network)
+            # Після того як відправили повідомлення робити канал вільним
+            if flag:
+                tmp_channel.is_busy = 0
         else:
             message_delivered(channel, buffer[0], current_node)
     else:
@@ -219,9 +226,9 @@ def data_logic(buffer, current_node, channel, network):
             'from_node': buffer[0].from_node,
         }
         if check_establish in establish_connections:
-            channel.is_busy = 0
+            # channel.is_busy = 0
             send_message(buffer, current_node, channel, network)
-            channel.is_busy = 1
+            # channel.is_busy = 1
 
 
 def release_logic(buffer, current_node, channel, network):
@@ -234,7 +241,7 @@ def release_logic(buffer, current_node, channel, network):
     :return:
     """
     if buffer[0].to_node == current_node.address:
-        channel.is_busy = 0
+        # channel.is_busy = 0
         check_establish = {
             'to_node': buffer[0].from_node,
             'from_node': buffer[0].to_node,
@@ -243,8 +250,9 @@ def release_logic(buffer, current_node, channel, network):
         statistic_table['0'].message_delivered(buffer[0])
         buffer.remove(buffer[0])
     else:
-        send_message(buffer, current_node, channel, network)
-        channel.is_busy = 0
+        flag, tmp_channel = send_message(buffer, current_node, channel, network)
+        if flag:
+            tmp_channel.is_busy = 0
 
 
 def send_message(buffer, current_node, channel, network):
@@ -257,6 +265,18 @@ def send_message(buffer, current_node, channel, network):
     msg_type = generate_same_message(buffer[0])
     msg_type.id = buffer[0].id
     flag = False
+    returned_channel = channel
+    if not channel_sender:
+
+        flag = channel.try_send_from_node_buffer_to_channel(current_node.id, buffer[0])
+        if flag:
+            statistic_table['0'].add_row(
+                'send message using channel between. Message {}'.format(msg_type),
+                current_node.address,
+                next_node.address,
+                datetime.datetime.now().microsecond
+            )
+        return flag, returned_channel
     if channel_sender != channel:
         # get from one buffer and sent to another buffer on node
         statistic_table['0'].add_row('from one buffer to another. Message {}'.format(msg_type),
@@ -279,16 +299,19 @@ def send_message(buffer, current_node, channel, network):
                 next_node.address,
                 datetime.datetime.now().microsecond
             )
+        returned_channel = channel_sender
         channel.remove_from_buffer(current_node.id, buffer[0])
     else:
-        if channel.try_send_from_node_buffer_to_channel(current_node.id, buffer[0]):
+        flag = channel.try_send_from_node_buffer_to_channel(current_node.id, buffer[0])
+        if flag:
             statistic_table['0'].add_row(
                 'send message using channel between. Message {}'.format(msg_type),
                 current_node.address,
                 next_node.address,
                 datetime.datetime.now().microsecond
             )
-    return flag
+
+    return flag, returned_channel
 
 
 def response_minus_logic(buffer, current_node, channel, network):
@@ -305,8 +328,8 @@ def response_minus_logic(buffer, current_node, channel, network):
         statistic_table['0'].message_delivered(buffer[0])
         buffer.remove(buffer[0])
     else:
-        send_message(buffer, current_node, channel, network)
-        channel.is_busy = 0
+        if send_message(buffer, current_node, channel, network):
+            channel.is_busy = 0
 
 
 def get_next_node_path(from_node, to_node, current_node):
@@ -377,23 +400,23 @@ def add_message_in_connect(message, network):
                                   find_node_by_address(next_node, network).id)
 
     message.time = datetime.datetime.now()
-
-    packets = split_messages_to_datagrams(message, 'data')
-    packets[-1].type_message = 'data_last'
-    request = generate_request_to_connect(message)
-    statistic_table['0'].message_add(request)
-    channes_sender.add_to_buffer(node_sender.id, request)
-    for i in packets:
-        channes_sender.add_to_buffer(node_sender.id, i)
-        ##
-        # Comment about TIME, need to count or save previously
-        ##
-        statistic_table['0'].add_row('create new connect pocket message with data size {}'.format(i.info_size),
-                                     i.from_node,
-                                     i.to_node,
-                                     datetime.datetime.now().microsecond
-                                     )
-        statistic_table['0'].message_add(i)
+    channes_sender.add_to_buffer(node_sender.id, message)
+    # packets = split_messages_to_datagrams(message, 'data')
+    # packets[-1].type_message = 'data_last'
+    # request = generate_request_to_connect(message)
+    # statistic_table['0'].message_add(request)
+    # channes_sender.add_to_buffer(node_sender.id, request)
+    # for i in packets:
+    #     channes_sender.add_to_buffer(node_sender.id, i)
+    #     ##
+    #     # Comment about TIME, need to count or save previously
+    #     ##
+    statistic_table['0'].add_row('create new connect message with data size {}'.format(message.info_size),
+                                 message.from_node,
+                                 message.to_node,
+                                 datetime.datetime.now().microsecond
+                                 )
+    statistic_table['0'].message_add(message)
 
 
 def message_delivered(channel, message, current_node):

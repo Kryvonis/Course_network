@@ -1,7 +1,7 @@
 # from django.db import models
 # Create your models here.
 
-from network.pkg.message.sender import statistic_table
+from network.pkg.message.sender import statistic_table, establish_connections
 import random
 import datetime
 
@@ -69,13 +69,22 @@ class Channel:
         else:
             self.end_node_buffer.pop(self.end_node_buffer.index(msg))
 
+    def is_established(self, msg):
+        check_establish = {
+            'to_node': msg.to_node,
+            'from_node': msg.from_node,
+        }
+        if check_establish in establish_connections:
+            return True
+        return False
+
     def can_send_message(self, id, msg):
         """
         Check if you can send message,
         :param id: node id
         :return: boolean
         """
-        if (self.is_busy == 1) and ('response' not in msg.type_message):
+        if (self.is_busy == 1) and ('response' not in msg.type_message) and (not self.is_established(msg)):
             return False
         if self.type == 'duplex':
             if self.message_buffer[str(id)]:
@@ -139,15 +148,15 @@ class Channel:
         """
         if random.random() > self.error_prob:
             if int(key) == self.end_node_id:
-                if ('response' in msg.type_message) or ('data' in msg.type_message):
-                    self.start_node_buffer.insert(0, msg)
-                else:
+                if ('datagram' in msg.type_message):
                     self.start_node_buffer.append(msg)
-            else:
-                if ('response' in msg.type_message) or ('data' in msg.type_message):
-                    self.end_node_buffer.insert(0, msg)
                 else:
+                    self.start_node_buffer.insert(0, msg)
+            else:
+                if ('datagram' in msg.type_message):
                     self.end_node_buffer.append(msg)
+                else:
+                    self.end_node_buffer.insert(0, msg)
             return False
         else:
             statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)

@@ -16,6 +16,8 @@ network = {}
 
 network['nodes'], network['channels'] = generate_randomly(12, 4)
 network['type'] = 'path'
+
+
 # initialize_short_path(network['nodes'])
 # send_tables(network)
 
@@ -35,7 +37,7 @@ def init_nodes(request, type):
     if type == 'path':
         initialize_short_path(network['nodes'])
     else:
-        initialize_node_path(network['nodes'],network['channels'])
+        initialize_node_path(network['nodes'], network['channels'])
     # send_tables(network)
     return HttpResponse(200)
 
@@ -85,6 +87,10 @@ def shutdown_node(request):
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
     network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
+    if network['type'] == 'path':
+        initialize_short_path(network['nodes'])
+    else:
+        initialize_node_path(network['nodes'], network['channels'])
     # initialize_short_path(network['nodes'])
     return HttpResponse(200)
 

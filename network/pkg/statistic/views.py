@@ -16,7 +16,7 @@ def show_statistic(request):
         'avrg_data_time': statistic['avrg_data_time'],
         'all_data_size': statistic['all_data_size'],
         'all_service_size': statistic['all_service_size'],
-        'rows':statistic['rows']
+        # 'rows':statistic['rows']
     }
     return render(request, 'statistic/index.html',
                   context={"statistic": statistic})
