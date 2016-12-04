@@ -1,6 +1,7 @@
 from network.pkg.channels.models import Channel
 from network.pkg.channels.serializers import JSONChanelSerializer
 import random
+from network.settings import CHANNEL_ERROR_PROBABILITY
 
 weights = (1, 2, 3, 4, 5, 7, 11, 12, 15, 17, 19, 24, 27, 28)
 channels_types = ('duplex', 'halfduplex')
@@ -18,7 +19,7 @@ def generate_channel(id, start_node, end_node, channel_type=0, weight=0):
     if not channel_type:
         channel_type = random.choice(channels_types)
 
-    error_prob = random.random() * 0.01
+    error_prob = random.random() * CHANNEL_ERROR_PROBABILITY + 0.01
     # error_prob = random.random()
     return Channel(id=id,
                    start_node_id=start_node,

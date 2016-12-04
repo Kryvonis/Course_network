@@ -60,10 +60,12 @@ class StatisticTable:
             self.all_service_size += msg.service_size
         try:
             self.avrg_time /= self.delivered_num
+            self.avrg_time *= 0.01
         except ZeroDivisionError:
             self.avrg_time = 0
         try:
             self.avrg_data_time /= self.delivered_data_num
+            self.avrg_data_time *= 0.01
         except ZeroDivisionError:
             self.avrg_data_time = 0
 

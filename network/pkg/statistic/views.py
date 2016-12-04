@@ -20,3 +20,13 @@ def show_statistic(request):
     }
     return render(request, 'statistic/index.html',
                   context={"statistic": statistic})
+
+
+def show_steps(request):
+    statistic_table['0'].get_statistic()
+    statistic = JSONStatisticTableSerializer.encode(statistic_table['0'])
+    statistic = {
+        'rows': statistic['rows']
+    }
+    return render(request, 'statistic/rows.html',
+                  context={"statistic": statistic})

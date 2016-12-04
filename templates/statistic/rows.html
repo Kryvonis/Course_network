@@ -22,55 +22,20 @@
 <body>
 <table class="table">
     <tr>
-        <th></th>
+        <th>Type</th>
+        <th>From Node</th>
+        <th>To Node</th>
+        <th>Time</th>
     </tr>
+    {% for item in statistic.rows %}
         <tr>
+            <td>{{ item.row_type }}</td>
+            <td>{{ item.from_node }}</td>
+            <td>{{ item.to_node }}</td>
+            <td>{{ item.time }}</td>
         </tr>
+    {% endfor %}
 </table>
-    <h2>Total sended messages</h2>
-    <h2>{{ statistic.total_send }}</h2>
-
-    <h2>Total received messages</h2>
-    <h2>{{ statistic.total_received }}</h2>
-
-    <h2>Total info received messages</h2>
-    <h2>{{ statistic.total_data_received }}</h2>
-
-    <h2>Average Time (ms)</h2>
-    <h2>{{ statistic.avrg_time }}</h2>
-
-    <h2>Average Info Time (ms)</h2>
-    <h2>{{ statistic.avrg_data_time }}</h2>
-
-    <h2>All Data Size (bytes)</h2>
-    <h2>{{ statistic.all_data_size }}</h2>
-
-    <h2>All Service Data Size (bytes)</h2>
-    <h2>{{ statistic.all_service_size }}</h2>
-
-
-
-
-
-
-
-
-<!--<table class="table">-->
-    <!--<tr>-->
-        <!--<th>Type</th>-->
-        <!--<th>From Node</th>-->
-        <!--<th>To Node</th>-->
-        <!--<th>Time</th>-->
-    <!--</tr>-->
-    <!--{% for item in statistic.rows %}-->
-        <!--<tr>-->
-            <!--<td>{{ item.row_type }}</td>-->
-            <!--<td>{{ item.from_node }}</td>-->
-            <!--<td>{{ item.to_node }}</td>-->
-            <!--<td>{{ item.time }}</td>-->
-        <!--</tr>-->
-    <!--{% endfor %}-->
-<!--</table>-->
 </body>
 
 

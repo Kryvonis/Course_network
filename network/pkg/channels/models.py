@@ -1,5 +1,3 @@
-# from django.db import models
-# Create your models here.
 
 from network.pkg.message.sender import statistic_table, establish_connections
 import random
@@ -47,15 +45,15 @@ class Channel:
         :return: None
         """
         if id == self.start_node_id:
-            if ('response' in msg.type_message):
-                self.start_node_buffer.insert(0, msg)
-            else:
-                self.start_node_buffer.append(msg)
+            # if ('response' in msg.type_message):
+            #     self.start_node_buffer.insert(0, msg)
+            # else:
+            self.start_node_buffer.append(msg)
         else:
-            if ('response' in msg.type_message):
-                self.end_node_buffer.insert(0, msg)
-            else:
-                self.end_node_buffer.append(msg)
+            # if ('response' in msg.type_message):
+            #     self.end_node_buffer.insert(0, msg)
+            # else:
+            self.end_node_buffer.append(msg)
 
     def remove_from_buffer(self, id, msg):
         """
@@ -136,8 +134,6 @@ class Channel:
                 else:
                     msg.delay -= 1
 
-    # def send_from_buffer_to_channel(self, node_id):
-    #     if self.can_send_message(node_id) and self.get_node_buffer(node_id):
 
     def __send_message(self, key, msg):
         """
@@ -167,30 +163,9 @@ class Channel:
                 self.end_node_buffer.insert(0, msg)
             return True
 
-    # def get_message_from_channel(self, position):
-    #     """
-    #     remove from channel buffer message
-    #     not working correct
-    #     :param position:
-    #     :return:
-    #     """
-    #     if self.message_buffer:
-    #         tmp = self.message_buffer[position]
-    #         self.message_buffer[position] = 0
-    #         return tmp
-
-    # def add_to_start_buffer
-    #
-    # def __repr__(self, *args, **kwargs):
-    #     cls = self.__class__.__name__
-    #     attr = ('%s=%s' % item for item in self.__dict__.items())
-    #
-    #     return '%s(%s)' % (cls, ', '.join(attr))
-
     def __eq__(self, other):
         if not isinstance(other, Channel):
             return False
         if other.__dict__ != self.__dict__:
             return False
         return True
-        # return super().__eq__(*args, **kwargs)

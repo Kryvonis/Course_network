@@ -120,7 +120,9 @@ TIME_ZONE = 'UTC'
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'
-SPLITED_SIZE = 100
+
+SPLITED_SIZE = 256
+CHANNEL_ERROR_PROBABILITY = 0.1
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 if 'test' in sys.argv:
