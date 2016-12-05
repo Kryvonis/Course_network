@@ -5,7 +5,7 @@ from network.settings.common import SPLITED_SIZE
 import random
 import datetime
 
-MESSAGE_PROBABILITY = 0.9
+MESSAGE_PROBABILITY = 0.5
 
 
 def generate_message(from_node, to_node, type_message, info_size, service_size=32):
@@ -52,7 +52,7 @@ def generate_response_to_connect(message, response_type):
 
 
 def generate_new_message(network, type, size):
-    prob = random.random()
+    prob = random.random() + 0.1
     if prob > MESSAGE_PROBABILITY:
         from_node = random.choice(network['nodes'])
         to_node = random.choice(network['nodes'])

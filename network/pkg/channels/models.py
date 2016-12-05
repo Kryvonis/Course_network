@@ -128,12 +128,16 @@ class Channel:
         """
         for key, msg in self.message_buffer.items():
             if msg:
-                if msg.delay <= 0:
-                    self.__send_message(key, msg)
-                    self.message_buffer[key] = 0
-                else:
-                    msg.delay -= 1
-
+                # if msg.delay <= 0:
+                #     self.__send_message(key, msg)
+                #     self.message_buffer[key] = 0
+                # else:
+                #     msg.delay -= 1
+            # FOR TEST
+            # DELETE AFTER
+                self.__send_message(key, msg)
+                self.message_buffer[key] = 0
+            #THIS
 
     def __send_message(self, key, msg):
         """
@@ -142,7 +146,7 @@ class Channel:
         :param msg: message
         :return: None
         """
-        if random.random() > self.error_prob:
+        if random.random() + + 0.01 > self.error_prob:
             if int(key) == self.end_node_id:
                 if ('datagram' in msg.type_message):
                     self.start_node_buffer.append(msg)

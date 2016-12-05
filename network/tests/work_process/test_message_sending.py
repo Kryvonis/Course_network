@@ -16,20 +16,40 @@ if __name__ == '__main__':
     network = {}
     network['nodes'], network['channels'] = generate_randomly(2, 1)
     initialize_short_path(network['nodes'])
-    # message = generate_message('0.0', '1.1', 'connect', 300, 32)
-    # add_message_in_connect(message, network['nodes'])
-    # message = generate_message('0.1', '1.1', 'connect', 300, 32)
-    # add_message_in_connect(message, network['nodes'])
-    # message = generate_message('1.1', '0.1', 'connect', 300, 32)
-    # add_message_in_connect(message, network['nodes'])
-    # message = generate_message('1.0', '0.1', 'connect', 300, 32)
-    # add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('0.0', '0.1', 'connect', 400, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('1.1', '1.0', 'connect', 400, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('1.1', '0.0', 'connect', 400, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('1.0', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('0.0', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
     #
-    # message = generate_message('1.0', '0.1', 'connect', 300, 32)
-    # add_message_in_connect(message, network['nodes'])
+    message = generate_message('1.0', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('0.0', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('1.1', '1.0', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+
+    message = generate_message('1.1', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+    #
+    message = generate_message('1.0', '0.1', 'connect', 300, 32)
+    add_message_in_connect(message, network['nodes'])
+
     while statistic_table['0'].message_connect_created_num() < 9:
 
-        message = generate_new_message(network, type, 1024)
+        message = generate_new_message(network, 'connect', 1024)
         if message and message.type_message == 'datagram':
             add_message_in_datagram(message, network['nodes'])
         if message and message.type_message == 'connect':
@@ -39,6 +59,7 @@ if __name__ == '__main__':
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
             iter_node['i'] = 0
+
     while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1

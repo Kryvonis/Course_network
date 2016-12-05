@@ -23,7 +23,7 @@ class Message:
         Message.__id -= 1
 
     def __eq__(self, other):
-        return self.id == other.id
+        return self.__dict__ == other.__dict__
 
     # def __repr__(self):
     #     return 'type:{}'.format(self.type_message)
