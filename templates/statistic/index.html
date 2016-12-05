@@ -20,33 +20,23 @@
     <link rel="stylesheet" href="{% static 'node/css/index.css' %}">
 </head>
 <body>
-<table class="table">
-    <tr>
-        <th></th>
-    </tr>
-        <tr>
-        </tr>
-</table>
-    <h2>Total sended messages</h2>
-    <h2>{{ statistic.total_send }}</h2>
+    <h3>Total sended messages</h3>
+    <h3>{{ statistic.total_send }}</h3>
 
-    <h2>Total received messages</h2>
-    <h2>{{ statistic.total_received }}</h2>
+    <h3>Total info messages</h3>
+    <h3>{{ statistic.total_data_received }}</h3>
 
-    <h2>Total info received messages</h2>
-    <h2>{{ statistic.total_data_received }}</h2>
+    <h3>Total service received messages</h3>
+    <h3>{{ statistic.total_service_received }}</h3>
 
-    <h2>Average Time (ms)</h2>
-    <h2>{{ statistic.avrg_time }}</h2>
+    <h3>Average Time (ms)</h3>
+    <h3>{{ statistic.avrg_delivery_time }}</h3>
 
-    <h2>Average Info Time (ms)</h2>
-    <h2>{{ statistic.avrg_data_time }}</h2>
+    <h3>All Data Size (bytes)</h3>
+    <h3>{{ statistic.all_data_size }}</h3>
 
-    <h2>All Data Size (bytes)</h2>
-    <h2>{{ statistic.all_data_size }}</h2>
-
-    <h2>All Service Data Size (bytes)</h2>
-    <h2>{{ statistic.all_service_size }}</h2>
+    <h3>All Service Data Size (bytes)</h3>
+    <h3>{{ statistic.all_service_size }}</h3>
 
 
 

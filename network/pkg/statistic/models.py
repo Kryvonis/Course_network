@@ -7,15 +7,16 @@ class StatisticTable:
     def __init__(self):
         self.rows = []
         self.message_nums = 0
-        self.created_message = []
-        self.delivered_message = []
-        self.delivered_data_message = []
+        self.created_service_message = []
         self.created_data_message = []
-        self.delivered_data_num = 0
-        self.created_num = len(self.created_message)
-        self.created_data_num = len(self.created_message)
-        self.delivered_num = len(self.delivered_message)
-        self.avrg_time = 0
+        self.delivered_service_message = []
+        self.delivered_data_message = []
+        self.connect_created_num = 0
+        self.delivered_service_num = len(self.delivered_service_message)
+        self.delivered_data_num = len(self.delivered_data_message)
+        self.created_service_num = len(self.created_service_message)
+        self.created_data_num = len(self.created_data_message)
+        self.avrg_service_time = 0
         self.avrg_data_time = 0
         self.all_data_size = 0
         self.all_service_size = 0
@@ -25,49 +26,50 @@ class StatisticTable:
                           'to_node': to_node, 'time': time})
 
     def message_connect_created_num(self):
-        num = 0
-        for i in self.created_message:
-            if i.type_message == 'connect':
-                num += 1
-        return num
+        return self.connect_created_num
 
     def message_add(self, msg):
-        self.created_message.append(msg)
+        if msg.type_message == 'connect':
+            self.connect_created_num += 1
+            return
         if ('data' in msg.type_message):
             self.created_data_message.append(msg)
-            self.created_data_num = len(self.created_data_message)
-        self.created_num = len(self.created_message)
+            # self.created_data_num = len(self.created_data_message)
+            self.created_data_num += 1
+        else:
+            self.created_service_message.append(msg)
+            # self.created_service_num = len(self.created_service_message)
+            self.created_service_num += 1
 
     def message_delivered(self, msg):
+        if msg.type_message == 'connect':
+            return
         msg.time = (datetime.datetime.now() - msg.time).microseconds
-        self.delivered_message.append(msg)
         if ('data' in msg.type_message):
             self.delivered_data_message.append(msg)
-            self.delivered_data_num = len(self.delivered_data_message)
-        self.delivered_num = len(self.delivered_message)
+            # self.delivered_data_num += len(self.delivered_data_message)
+            self.delivered_data_num += 1
+        else:
+            self.delivered_service_message.append(msg)
+            # self.delivered_service_num = len(self.delivered_service_message)
+            self.delivered_service_num += 1
 
     def get_statistic(self):
-        self.created_num = len(self.created_message)
-        self.delivered_num = len(self.delivered_message)
         self.avrg_time = 0
         self.all_data_size = 0
         self.all_service_size = 0
-        for msg in self.delivered_message:
-            if 'data' in msg.type_message:
-                self.avrg_data_time += msg.time
-            self.avrg_time += msg.time
+
+        for msg in self.delivered_service_message:
+            self.all_service_size += msg.service_size
+        for msg in self.delivered_data_message:
             self.all_data_size += msg.info_size
             self.all_service_size += msg.service_size
-        try:
-            self.avrg_time /= self.delivered_num
-            self.avrg_time *= 0.01
-        except ZeroDivisionError:
-            self.avrg_time = 0
+            self.avrg_data_time += msg.time
         try:
             self.avrg_data_time /= self.delivered_data_num
-            self.avrg_data_time *= 0.01
         except ZeroDivisionError:
-            self.avrg_data_time = 0
+            self.avrg_time = 0
+
 
             # total send message
             # total received message

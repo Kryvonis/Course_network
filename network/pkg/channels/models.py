@@ -1,5 +1,6 @@
 
 from network.pkg.message.sender import statistic_table, establish_connections
+from network.settings import CAPACITY
 import random
 import datetime
 
@@ -101,7 +102,7 @@ class Channel:
         :param id: node id which sending
         :return: None
         """
-        msg.delay = int(msg.info_size / (200 / self.weight))
+        msg.delay = int(msg.info_size / (CAPACITY / self.weight))
         if self.type == 'duplex':
             self.message_buffer[str(id)] = msg
         else:
@@ -128,16 +129,16 @@ class Channel:
         """
         for key, msg in self.message_buffer.items():
             if msg:
-                # if msg.delay <= 0:
-                #     self.__send_message(key, msg)
-                #     self.message_buffer[key] = 0
-                # else:
-                #     msg.delay -= 1
-            # FOR TEST
-            # DELETE AFTER
-                self.__send_message(key, msg)
-                self.message_buffer[key] = 0
-            #THIS
+                if msg.delay <= 0:
+                    self.__send_message(key, msg)
+                    self.message_buffer[key] = 0
+                else:
+                    msg.delay -= 1
+            # # FOR TEST
+            # # DELETE AFTER
+            #     self.__send_message(key, msg)
+            #     self.message_buffer[key] = 0
+            # #THIS
 
     def __send_message(self, key, msg):
         """
@@ -146,7 +147,7 @@ class Channel:
         :param msg: message
         :return: None
         """
-        if random.random() + + 0.01 > self.error_prob:
+        if random.random() + 0.01 > self.error_prob or msg.type_message == 'request':
             if int(key) == self.end_node_id:
                 if ('datagram' in msg.type_message):
                     self.start_node_buffer.append(msg)
@@ -160,7 +161,10 @@ class Channel:
             return False
         else:
             statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
-            # self.add_to_buffer(key, msg)
+            # print('DROPED')
+            # # self.add_to_buffer(key, msg)
+            # print('{}'.format(msg.type_message))
+
             if key == self.start_node_id:
                 self.start_node_buffer.insert(0, msg)
             else:

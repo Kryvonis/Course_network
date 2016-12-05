@@ -25,14 +25,12 @@
         <th>Type</th>
         <th>From Node</th>
         <th>To Node</th>
-        <th>Time</th>
     </tr>
     {% for item in statistic.rows %}
         <tr>
             <td>{{ item.row_type }}</td>
             <td>{{ item.from_node }}</td>
             <td>{{ item.to_node }}</td>
-            <td>{{ item.time }}</td>
         </tr>
     {% endfor %}
 </table>

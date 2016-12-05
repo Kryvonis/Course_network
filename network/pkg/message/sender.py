@@ -121,6 +121,7 @@ def request_logic(buffer, current_node, channel, network):
             response = generate_response_to_connect(buffer[0], '-')
             statistic_table['0'].message_delivered(buffer[0])
             channel.remove_from_buffer(current_node.id, buffer[0])
+            response.from_node = current_node.address
             buffer.insert(0, response)
             statistic_table['0'].message_add(response)
             flag, tmp_channel = send_message(buffer, current_node, channel, network)
@@ -198,6 +199,7 @@ def response_plus_logic(buffer, current_node, channel, network):
         )
         buffer.remove(buffer[0])  # remove from buffer "response+"
         # channel.is_busy = 1
+
         try:
             packets = split_messages_to_datagrams(buffer[0], 'data')
         except:
@@ -215,12 +217,13 @@ def response_plus_logic(buffer, current_node, channel, network):
                                          datetime.datetime.now().microsecond
                                          )
             statistic_table['0'].message_add(i)
-        # # buffer[0].type_message = 'data'
-        # # statistic_table['0'].message_add(buffer[0])
-        #
-        # ПОправити якщо це дата месетджи і канал установлено то тоді відправляти
-        send_message(buffer, current_node, channel, network)
-        # channel.is_busy = 1
+            # # buffer[0].type_message = 'data'
+            # # statistic_table['0'].message_add(buffer[0])
+            #
+            # ПОправити якщо це дата месетджи і канал установлено то тоді відправляти
+
+            # send_message(buffer, current_node, channel, network)
+            # channel.is_busy = 1
     else:
         send_message(buffer, current_node, channel, network)
 
@@ -283,7 +286,7 @@ def data_logic(buffer, current_node, channel, network):
         # if check_establish in establish_connections:
         #     # channel.is_busy = 0
         send_message(buffer, current_node, channel, network)
-            # channel.is_busy = 1
+        # channel.is_busy = 1
 
 
 def release_channels(msg, network):
@@ -320,7 +323,10 @@ def release_logic(buffer, current_node, channel, network):
             'to_node': buffer[0].from_node,
             'from_node': buffer[0].to_node,
         }
-        establish_connections.pop(establish_connections.index(check_establish))
+        try:
+            establish_connections.pop(establish_connections.index(check_establish))
+        except:
+            pass
         release_channels(buffer[0], network)
         statistic_table['0'].message_delivered(buffer[0])
         buffer.remove(buffer[0])

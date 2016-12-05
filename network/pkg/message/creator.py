@@ -1,14 +1,14 @@
 from network.pkg.message.models import Message
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.message.serializers import JSONMessageSerializer
-from network.settings.common import SPLITED_SIZE
+from network.settings.common import SPLITED_SIZE, SERVICE_SIZE
 import random
 import datetime
 
 MESSAGE_PROBABILITY = 0.5
 
 
-def generate_message(from_node, to_node, type_message, info_size, service_size=32):
+def generate_message(from_node, to_node, type_message, info_size, service_size=SERVICE_SIZE):
     time = datetime.datetime.now()
     # service_size = 0
     delay = 0
@@ -37,7 +37,7 @@ def generate_request_to_connect(message):
                    message.to_node,
                    'request',
                    0,
-                   32,
+                   SERVICE_SIZE,
                    1)
 
 
@@ -47,7 +47,7 @@ def generate_response_to_connect(message, response_type):
                    message.from_node,
                    'response' + response_type,
                    0,
-                   32,
+                   SERVICE_SIZE,
                    1)
 
 
@@ -58,7 +58,7 @@ def generate_new_message(network, type, size):
         to_node = random.choice(network['nodes'])
         while from_node.address == to_node.address:
             to_node = random.choice(network['nodes'])
-        message = generate_message(from_node.address, to_node.address, type, size, 32)
+        message = generate_message(from_node.address, to_node.address, type, size, SERVICE_SIZE)
         return message
 
 

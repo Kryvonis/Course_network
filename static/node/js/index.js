@@ -338,6 +338,23 @@ function send_datagram() {
         async: true
     });
 }
+function add_datagram() {
+    var start_node_id = document.getElementById('datagram_start_node_id').value;
+    var end_node_id = document.getElementById('datagram_end_node_id').value;
+    var info_size = document.getElementById('datagram_info_size_id').value;
+
+    $.ajax({
+        url: 'message/datagram/add',
+        type: 'POST',
+        data: JSON.stringify({
+            'start_node_address': start_node_id, 'end_node_address': end_node_id,
+            'info_size': info_size
+        }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true
+    });
+}
 function send_connect() {
     var start_node_id = document.getElementById('connect_start_node_id').value;
     var end_node_id = document.getElementById('connect_end_node_id').value;
@@ -345,6 +362,23 @@ function send_connect() {
 
     $.ajax({
         url: 'message/connect',
+        type: 'POST',
+        data: JSON.stringify({
+            'start_node_address': start_node_id, 'end_node_address': end_node_id,
+            'info_size': info_size
+        }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true
+    });
+}
+function add_connect() {
+    var start_node_id = document.getElementById('connect_start_node_id').value;
+    var end_node_id = document.getElementById('connect_end_node_id').value;
+    var info_size = document.getElementById('connect_info_size_id').value;
+
+    $.ajax({
+        url: 'message/connect/add',
         type: 'POST',
         data: JSON.stringify({
             'start_node_address': start_node_id, 'end_node_address': end_node_id,
@@ -382,6 +416,19 @@ function run() {
     });
     location.reload();
 }
+
+function run_simul() {
+
+    $.ajax({
+        url: 'message/simul',
+        type: 'POST',
+        data: "",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false
+    });
+}
+
 function save_nodes() {
     $.ajax({
         url: 'jsonsave',

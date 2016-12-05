@@ -44,6 +44,16 @@ def send_message_in_datagram(request):
     return HttpResponse(200)
 
 
+def add_send_message_in_datagram(request):
+    statistic_table['0'] = StatisticTable()
+    set_statistic_table(statistic_table['0'])
+    req = json.loads(request.body.decode('utf-8'))
+    message = generate_message(req['start_node_address'], req['end_node_address'], 'datagram', int(req['info_size']))
+    add_message_in_datagram(message, network['nodes'])
+
+    return HttpResponse(200)
+
+
 def send_message_in_connect(request):
     statistic_table['0'] = StatisticTable()
     set_statistic_table(statistic_table['0'])
@@ -56,6 +66,16 @@ def send_message_in_connect(request):
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
             iter_node['i'] = 0
+    return HttpResponse(200)
+
+
+def add_send_message_in_connect(request):
+    statistic_table['0'] = StatisticTable()
+    set_statistic_table(statistic_table['0'])
+    req = json.loads(request.body.decode('utf-8'))
+    message = generate_message(req['start_node_address'], req['end_node_address'], 'connect', int(req['info_size']))
+    add_message_in_connect(message, network['nodes'])
+    # statistic_table.delivered_num
     return HttpResponse(200)
 
 
@@ -100,6 +120,15 @@ def run(request, type):
             iter_node['i'] += 1
             if iter_node['i'] == len(network['nodes']):
                 iter_node['i'] = 0
+    while has_messages(network['channels']):
+        step(iter_node['i'], network['nodes'], network['channels'])
+        iter_node['i'] += 1
+        if iter_node['i'] == len(network['nodes']):
+            iter_node['i'] = 0
+
+    return HttpResponse(200)
+
+def run_simul(request):
     while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1

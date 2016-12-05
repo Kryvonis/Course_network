@@ -10,10 +10,9 @@ def show_statistic(request):
     statistic = JSONStatisticTableSerializer.encode(statistic_table['0'])
     statistic = {
         'total_send': statistic['total_send'],
-        'total_received': statistic['total_received'],
         'total_data_received': statistic['total_data_received'],
-        'avrg_time': statistic['avrg_time'],
-        'avrg_data_time': statistic['avrg_data_time'],
+        'total_service_received': statistic['total_service_received'],
+        'avrg_delivery_time': statistic['avrg_delivery_time'],
         'all_data_size': statistic['all_data_size'],
         'all_service_size': statistic['all_service_size'],
         # 'rows':statistic['rows']

@@ -18,8 +18,11 @@ from . import views
 
 urlpatterns = [
     url(r'^datagram$', view=views.send_message_in_datagram, name='datagram'),
+    url(r'^datagram/add$', view=views.add_send_message_in_datagram, name='datagram'),
     url(r'^connect$', view=views.send_message_in_connect, name='connect'),
+    url(r'^connect/add$', view=views.add_send_message_in_connect, name='connect'),
     url(r'^step$', view=views.next_iteration, name='next_step'),
-    url(r'^run/(?P<type>[0-9A-Za-z]+)$$', view=views.run, name='run'),
+    url(r'^run/(?P<type>[0-9A-Za-z]+)$', view=views.run, name='run'),
+    url(r'^simul$', view=views.run_simul, name='run-simul'),
 
 ]

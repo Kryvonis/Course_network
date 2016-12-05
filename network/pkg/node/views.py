@@ -18,7 +18,7 @@ network['nodes'], network['channels'] = generate_randomly(12, 4)
 network['type'] = 'path'
 
 
-# initialize_short_path(network['nodes'])
+initialize_short_path(network['nodes'])
 # send_tables(network)
 
 
