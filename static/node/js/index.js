@@ -389,18 +389,6 @@ function add_connect() {
         async: true
     });
 }
-function next_step() {
-
-    $.ajax({
-        url: 'message/step',
-        type: 'POST',
-        data: "",
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        async: true
-    });
-    location.reload();
-}
 function run() {
     var how_much = document.getElementById('how_much_id').value;
     var msh_type = document.getElementById('what_type_id').value;

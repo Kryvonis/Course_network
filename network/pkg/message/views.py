@@ -58,6 +58,12 @@ def send_message_in_connect(request):
     statistic_table['0'] = StatisticTable()
     set_statistic_table(statistic_table['0'])
     req = json.loads(request.body.decode('utf-8'))
+    channels_dump = []
+    for channel in network['channels']:
+        channels_dump.append(channel.type)
+        channel.type = 'halfduplex'
+        channel.message_buffer['0'] = 0
+
     message = generate_message(req['start_node_address'], req['end_node_address'], 'connect', int(req['info_size']))
     add_message_in_connect(message, network['nodes'])
     # statistic_table.delivered_num
@@ -66,6 +72,13 @@ def send_message_in_connect(request):
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):
             iter_node['i'] = 0
+
+    for i, channel in enumerate(network['channels']):
+        if channels_dump[i] == 'duplex':
+            channel.message_buffer['{}'.format(channel.start_node_id)] = 0
+            channel.message_buffer['{}'.format(channel.end_node_id)] = 0
+        channel.type = channels_dump[i]
+
     return HttpResponse(200)
 
 
@@ -93,6 +106,7 @@ def run(request, type):
     statistic_table['0'] = StatisticTable()
     set_statistic_table(statistic_table['0'])
     req = json.loads(request.body.decode('utf-8'))
+
     if type == 'datagram':
         while statistic_table['0'].created_data_num < int(req['need']) * math.ceil(
                         int(req['info_size']) / SPLITED_SIZE):
@@ -108,6 +122,13 @@ def run(request, type):
             if iter_node['i'] == len(network['nodes']):
                 iter_node['i'] = 0
     if type == 'connect':
+
+        channels_dump = []
+        for channel in network['channels']:
+            channels_dump.append(channel.type)
+            channel.type = 'halfduplex'
+            channel.message_buffer['0'] = 0
+
         while statistic_table['0'].message_connect_created_num() < int(req['need']):
 
             message = generate_new_message(network, type, int(req['info_size']))
@@ -120,6 +141,12 @@ def run(request, type):
             iter_node['i'] += 1
             if iter_node['i'] == len(network['nodes']):
                 iter_node['i'] = 0
+
+        for i, channel in enumerate(network['channels']):
+            if channels_dump[i] == 'duplex':
+                channel.message_buffer['{}'.format(channel.start_node_id)] = 0
+                channel.message_buffer['{}'.format(channel.end_node_id)] = 0
+            channel.type = channels_dump[i]
     while has_messages(network['channels']):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
@@ -127,6 +154,7 @@ def run(request, type):
             iter_node['i'] = 0
 
     return HttpResponse(200)
+
 
 def run_simul(request):
     while has_messages(network['channels']):
