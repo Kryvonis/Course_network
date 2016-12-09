@@ -46,27 +46,29 @@ if __name__ == '__main__':
     # #
     # message = generate_message('1.0', '0.1', 'connect', 100, SERVICE_SIZE)
     # add_message_in_connect(message, network['nodes'])
+    for i in range(2):
+        while statistic_table['0'].message_connect_created_num() < 10:
 
-    while statistic_table['0'].message_connect_created_num() < 10:
+            message = generate_new_message(network, 'connect', 100000)
+            if message and message.type_message == 'datagram':
+                add_message_in_datagram(message, network['nodes'])
+            if message and message.type_message == 'connect':
+                add_message_in_connect(message, network['nodes'])
 
-        message = generate_new_message(network, 'connect', 1000000)
-        if message and message.type_message == 'datagram':
-            add_message_in_datagram(message, network['nodes'])
-        if message and message.type_message == 'connect':
-            add_message_in_connect(message, network['nodes'])
+            step(iter_node['i'], network['nodes'], network['channels'])
+            iter_node['i'] += 1
+            if iter_node['i'] == len(network['nodes']):
+                iter_node['i'] = 0
 
-        step(iter_node['i'], network['nodes'], network['channels'])
-        iter_node['i'] += 1
-        if iter_node['i'] == len(network['nodes']):
-            iter_node['i'] = 0
+        while has_messages(network['channels']):
+            step(iter_node['i'], network['nodes'], network['channels'])
+            iter_node['i'] += 1
+            if iter_node['i'] == len(network['nodes']):
+                iter_node['i'] = 0
+            print(statistic_table['0'].rows[-1])
+        statistic_table['0'].get_statistic()
+        print('BP')
 
-    while has_messages(network['channels']):
-        step(iter_node['i'], network['nodes'], network['channels'])
-        iter_node['i'] += 1
-        if iter_node['i'] == len(network['nodes']):
-            iter_node['i'] = 0
-    statistic_table['0'].get_statistic()
-    print('BP')
     # i = 0
     # while has_messages(network['channels']):
     #     step(iter_node['i'], network['nodes'], network['channels'])

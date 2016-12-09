@@ -18,7 +18,7 @@ def step(i, network, network_channels):
     for channel in current_node.channels:
         buffer = channel.get_node_buffer(current_node.id)
         if buffer:
-            if buffer[0].type_message == 'datagram':
+            if 'datagram' in buffer[0].type_message :
                 datagram_logic(buffer, current_node, channel, network)
                 continue
             if buffer[0].type_message == 'connect':
