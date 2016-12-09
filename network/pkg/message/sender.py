@@ -1,5 +1,5 @@
 from network.pkg.message.creator import generate_response_to_connect, split_messages_to_datagrams, \
-    generate_request_to_connect, generate_same_message
+    generate_request_to_connect, generate_same_message, generate_response_to_datagram
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.channels.finder import find_channel
 import datetime
@@ -18,7 +18,7 @@ def step(i, network, network_channels):
     for channel in current_node.channels:
         buffer = channel.get_node_buffer(current_node.id)
         if buffer:
-            if 'datagram' in buffer[0].type_message :
+            if 'datagram' in buffer[0].type_message:
                 datagram_logic(buffer, current_node, channel, network)
                 continue
             if buffer[0].type_message == 'connect':
@@ -46,8 +46,17 @@ def step(i, network, network_channels):
 
 def datagram_logic(buffer, current_node, channel, network):
     if buffer[0].to_node == current_node.address:
-        message_delivered(channel, buffer[0], current_node)
-        # return
+        if buffer[0].type_message == 'datagram_last':
+            statistic_table['0'].message_delivered(buffer[0])
+            # generate response check some situation when channel can`t be
+            response = generate_response_to_datagram(buffer[0], 'datagram_r+')
+            channel.remove_from_buffer(current_node.id, buffer[0])
+            buffer.insert(0, response)
+            statistic_table['0'].message_add(buffer[0])
+            send_message(buffer, current_node, channel, network)
+        else:
+            message_delivered(channel, buffer[0], current_node)
+            # return
     else:
         send_message(buffer, current_node, channel, network)
 
@@ -455,6 +464,7 @@ def add_message_in_datagram(message, network):
     message.time = datetime.datetime.now()
 
     datagrams = split_messages_to_datagrams(message, 'datagram')
+    datagrams[-1].type_message = 'datagram_last'
     for i in datagrams:
         channes_sender.add_to_buffer(node_sender.id, i)
         statistic_table['0'].add_row('create new datagram message with data size {}'.format(i.info_size),

@@ -16,7 +16,7 @@ class JSONChanelSerializer:
                 "id": obj.id,
                 "weight": obj.weight,
                 "type": obj.type,
-                "error_prob": obj.error_prob,
+                "error_prob": "{0:.3f}".format(obj.error_prob),
                 "start_node_id": obj.start_node_id,
                 "end_node_id": obj.end_node_id,
                 "message_buffer": JSONMessageSerializer.encode(obj.message_buffer),

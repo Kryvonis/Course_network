@@ -51,6 +51,16 @@ def generate_response_to_connect(message, response_type):
                    1)
 
 
+def generate_response_to_datagram(message, response_type):
+    return Message(datetime.datetime.now(),
+                   message.to_node,
+                   message.from_node,
+                   response_type,
+                   0,
+                   SERVICE_SIZE,
+                   1)
+
+
 def generate_new_message(network, type, size):
     prob = random.random() + 0.1
     if prob > MESSAGE_PROBABILITY:

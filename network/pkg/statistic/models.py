@@ -45,7 +45,11 @@ class StatisticTable:
         if msg.type_message == 'connect':
             return
         msg.time = (datetime.datetime.now() - msg.time).microseconds
-        if ('data' in msg.type_message):
+        if 'datagram_r' in msg.type_message:
+            self.delivered_service_message.append(msg)
+            # self.delivered_service_num = len(self.delivered_service_message)
+            self.delivered_service_num += 1
+        elif 'data' in msg.type_message:
             self.delivered_data_message.append(msg)
             # self.delivered_data_num += len(self.delivered_data_message)
             self.delivered_data_num += 1

@@ -10,7 +10,7 @@ class JSONStatisticTableSerializer:
                 'total_send': o.delivered_service_num + o.delivered_data_num,
                 'total_data_received': o.delivered_data_num,
                 'total_service_received': o.delivered_service_num,
-                'avrg_delivery_time': o.avrg_data_time,
+                'avrg_delivery_time': "{0:.3f}".format(o.avrg_data_time * 0.001),
                 'all_data_size': o.all_data_size,
                 'all_service_size': o.all_service_size,
                 'rows': o.rows,
