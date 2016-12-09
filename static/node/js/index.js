@@ -111,7 +111,19 @@ function Generate(local_net) {
                 var node = find_node(nodes, node_id);
                 modal_window.find('#id_node').text(node.id);
                 modal_window.find('#shutdown').text(node.shutdown);
-                modal_window.find('#table_node').text(JSON.stringify(node.table.metric, null, 4));
+//                node.table.path.forEach(function (path){
+                for(var key in node.table.path)
+                    {
+                        var tr="<tr>";
+                        var td1="<td>"+key+"</td>";
+                        var td2="<td>"+node.table.path[key]+"</td>";
+                        var td3="<td>"+node.table.metric[key]+"</td></tr>";
+
+                       modal_window.find('#table_node').append(tr+td1+td2+td3);
+
+                    }
+//                .text(path)
+//                })
                 modal_window.find('#table_node_path').text(JSON.stringify(node.table.path, null, 4));
 
                 modal_window.find('#address_node').text(node.address);
