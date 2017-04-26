@@ -7,28 +7,33 @@ from network.pkg.node.serializers import JSONNodeSerializer
 from network.pkg.channels.serializers import JSONChanelSerializer
 from network.pkg.node.finder import find_node_by_address
 from network.pkg.node.creator import generate_randomly, generate_node
-from network.pkg.routing.finder import initialize_short_path, send_tables, initialize_node_path
+from network.pkg.routing.finder import initialize_short_path, send_tables, \
+    initialize_node_path
 
 import json
 import os
+
 
 network = {}
 
 network['nodes'], network['channels'] = generate_randomly(12, 4)
 network['type'] = 'path'
 
-
 initialize_short_path(network['nodes'])
+
+
 # send_tables(network)
 
 
 @ensure_csrf_cookie
 def index(request):
     return render(request, 'node/index.html',
-                  context={"network": {"nodes": JSONNodeSerializer.encode(network['nodes']),
-                                       "channels": JSONChanelSerializer.encode(network['channels'])
-                                       }
-                           }
+                  context={"network": {
+                      "nodes": JSONNodeSerializer.encode(network['nodes']),
+                      "channels": JSONChanelSerializer.encode(
+                          network['channels'])
+                  }
+                  }
                   )
 
 
@@ -86,7 +91,8 @@ def shutdown_node(request):
 
 def regenerate(request):
     req = json.loads(request.body.decode('utf-8'))
-    network['nodes'], network['channels'] = generate_randomly(int(req['node_nums']), int(req['average_nums']))
+    network['nodes'], network['channels'] = generate_randomly(
+        int(req['node_nums']), int(req['average_nums']))
     if network['type'] == 'path':
         initialize_short_path(network['nodes'])
     else:
@@ -99,22 +105,20 @@ def save(request):
     req = json.loads(request.body.decode('utf-8'))
     with open(os.path.join(settings.BASE_DIR, req['filename']), 'w') as f:
         json.dump({'nodes': JSONNodeSerializer.encode(network['nodes']),
-                   'channels': JSONChanelSerializer.encode(network['channels'])}, f)
+                   'channels': JSONChanelSerializer.encode(
+                       network['channels'])}, f)
     return HttpResponse(200)
 
 
 def load(request):
-    """
-    Not working correctly because after loading links to channels changes
-    :param request:
-    :return:
-    """
     req = json.loads(request.body.decode('utf-8'))
     with open(os.path.join(settings.BASE_DIR, req['filename']), 'r') as f:
         load_dump = json.load(f)
 
-        network['nodes'], network['channels'] = JSONNodeSerializer.decode(load_dump['nodes']), \
-                                                JSONChanelSerializer.decode(load_dump['channels'])
+        network['nodes'], network['channels'] = JSONNodeSerializer.decode(
+            load_dump['nodes']), \
+                                                JSONChanelSerializer.decode(
+                                                    load_dump['channels'])
         for node in network['nodes']:
             node.channels = []
         for channel in network['channels']:

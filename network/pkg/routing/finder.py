@@ -4,17 +4,26 @@ from network.pkg.channels.finder import find_channel
 from network.pkg.message.creator import generate_message
 from network.pkg.statistic.models import StatisticTable
 
-from network.pkg.message.sender import add_message_in_datagram, add_message_in_connect, step, set_statistic_table, \
+from network.pkg.message.sender import add_message_in_datagram, \
+    add_message_in_connect, step, set_statistic_table, \
     statistic_table
 
 import json
 from math import inf
+
 
 iter_node = {'i': 0}
 statistic_table = {}
 
 
 def dijkstra(nodes, concrete_node, network):
+    """
+    dijkstra algorithm https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm 
+    :param nodes: 
+    :param concrete_node: 
+    :param network: 
+    :return: 
+    """
     deleted_nodes = []
     nodes_weight = {}
     neibor_path = {}
@@ -23,13 +32,12 @@ def dijkstra(nodes, concrete_node, network):
     marked_node = conc_node
     for node in nodes:
         nodes_weight[find_node(node.id, network).address] = inf
-        neibor_path[find_node(node.id, network).address] = '{}'.format(find_node(concrete_node, network).address)
+        neibor_path[find_node(node.id, network).address] = '{}'.format(
+            find_node(concrete_node, network).address)
     nodes_weight[conc_node.address] = 0
 
     for i in range(len(nodes)):
 
-        # print('node id = {}'.format(node_i))
-        # neibors = []
         for channel in conc_node.channels:
             if not channel.shutdown:
                 if channel.start_node_id != conc_node.id:
@@ -39,18 +47,21 @@ def dijkstra(nodes, concrete_node, network):
 
                 if neibor_id in deleted_nodes:
                     continue
-                if find_node(neibor_id, network).address.split('.')[0] != conc_node.address.split('.')[0]:
+                if find_node(neibor_id, network).address.split('.')[0] != \
+                        conc_node.address.split('.')[0]:
                     neibor_path[find_node(neibor_id, network).address] = \
-                        neibor_path[conc_node.address] + ',' + str(find_node(neibor_id, network).address)
+                        neibor_path[conc_node.address] + ',' + str(
+                            find_node(neibor_id, network).address)
                     nodes_weight[find_node(neibor_id, network).address] = \
                         channel.weight + nodes_weight[conc_node.address]
                     continue
-                # neibors.append(neibor_id)
 
-                if (channel.weight + nodes_weight[conc_node.address]) < nodes_weight[
-                    find_node(neibor_id, network).address]:
+                if (channel.weight + nodes_weight[conc_node.address]) < \
+                        nodes_weight[
+                            find_node(neibor_id, network).address]:
                     neibor_path[find_node(neibor_id, network).address] = \
-                        neibor_path[conc_node.address] + ',' + str(find_node(neibor_id, network).address)
+                        neibor_path[conc_node.address] + ',' + str(
+                            find_node(neibor_id, network).address)
                     nodes_weight[find_node(neibor_id, network).address] = \
                         channel.weight + nodes_weight[conc_node.address]
         min = inf
@@ -58,7 +69,8 @@ def dijkstra(nodes, concrete_node, network):
 
         for key, value in nodes_weight.items():
             if (value < min) and (key not in deleted_nodes) and (
-                        key.split('.')[0] == marked_node.address.split('.')[0]):
+                        key.split('.')[0] == marked_node.address.split('.')[
+                        0]):
                 conc_node = find_node_by_address(key, network)
                 min = value
     neibor_path[marked_node.address] = '-'
@@ -85,7 +97,8 @@ def initialize_node_path(network, channels):
                 if node.address.split('.')[1] == '0':
                     main_node_2 = node
                 region2.append(node)
-    main_channel = find_channel(main_node_1.channels, main_node_1.id, main_node_2.id)
+    main_channel = find_channel(main_node_1.channels, main_node_1.id,
+                                main_node_2.id)
     t = region1[region1.index(main_node_1)].channels
     t.pop(t.index(main_channel))
 
@@ -129,7 +142,8 @@ def initialize_short_path(network):
                 if node.address.split('.')[1] == '0':
                     main_node_2 = node
                 region2.append(node)
-    main_channel = find_channel(main_node_1.channels, main_node_1.id, main_node_2.id)
+    main_channel = find_channel(main_node_1.channels, main_node_1.id,
+                                main_node_2.id)
     t = region1[region1.index(main_node_1)].channels
     t.pop(t.index(main_channel))
 
@@ -164,16 +178,21 @@ def send_tables(network):
     for node in range(1, int(len(network['nodes']) / 2)):
         send_node = find_node_by_address('0.' + str(node), network['nodes'])
         if send_node:
-            add_message_in_datagram(generate_message(main_node_1.address, send_node.address, 'datagram', 128),
-                                   network['nodes'])
+            add_message_in_datagram(
+                generate_message(main_node_1.address, send_node.address,
+                                 'datagram', 128),
+                network['nodes'])
 
     for node in range(1, int(len(network['nodes']) / 2)):
         send_node = find_node_by_address('1.' + str(node), network['nodes'])
         if send_node:
-            add_message_in_datagram(generate_message(main_node_2.address, send_node.address, 'datagram', 128),
-                                   network['nodes'])
+            add_message_in_datagram(
+                generate_message(main_node_2.address, send_node.address,
+                                 'datagram', 128),
+                network['nodes'])
 
-    while statistic_table['0'].delivered_data_num < (statistic_table['0'].created_data_num):
+    while statistic_table['0'].delivered_data_num < (
+    statistic_table['0'].created_data_num):
         step(iter_node['i'], network['nodes'], network['channels'])
         iter_node['i'] += 1
         if iter_node['i'] == len(network['nodes']):

@@ -13,7 +13,5 @@ def find_node_by_address(addr, network, mode=0):
                     return i
             else:
                 return i
-    # print('return None on addr')
-    # print(addr)
     return None
 

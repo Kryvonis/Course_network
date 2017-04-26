@@ -7,7 +7,8 @@ from django.db import models
 class Message:
     __id = 0
 
-    def __init__(self, time, from_node, to_node, type_message, info_size, service_size, delay):
+    def __init__(self, time, from_node, to_node, type_message, info_size,
+                 service_size, delay):
         self.id = Message.__id
         Message.__id += 1
         self.time = time
@@ -25,9 +26,6 @@ class Message:
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    # def __repr__(self):
-    #     return 'type:{}'.format(self.type_message)
-
     def __str__(self):
         return 'from_node:{};\n' \
                'to_node:{};\n' \
@@ -36,7 +34,3 @@ class Message:
                'service_size:{};\n'.format(self.from_node, self.to_node,
                                            self.type_message, self.info_size,
                                            self.service_size)
-
-        # def __repr__(self):
-        #     return '{};{};{};{};{};'.format(self.from_node, self.to_node, self.type_message, self.info_size,
-        #                                     self.service_size)

@@ -40,7 +40,9 @@ class JSONMessageSerializer:
 
             if obj:
                 obj['time'] = json.loads(obj['time'])
-                obj['time'] = datetime.datetime.strptime(obj['time'] + 'Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+                obj['time'] = datetime.datetime.strptime(
+                    obj['time'] + 'Z', "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
                 message = Message(obj['time'],
                                   obj['from_node'],
                                   obj['to_node'],

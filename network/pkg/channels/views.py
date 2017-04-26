@@ -34,8 +34,10 @@ def add_channel(request):
 
 def channel_exitst(start_node, end_node):
     for _channel in network['channels']:
-        if (_channel.start_node_id == start_node and _channel.end_node_id == end_node) or (
-                        _channel.start_node_id == end_node and _channel.end_node_id == start_node):
+        if ((_channel.start_node_id == start_node)
+            and (_channel.end_node_id == end_node)) \
+                or ((_channel.start_node_id == end_node)
+                    and (_channel.end_node_id == start_node)):
             return True
     return False
 
@@ -50,8 +52,10 @@ def remove_channel(request):
     for node in network['nodes']:
         if node.id == start_node_id or node.id == end_node_id:
             for _channel in node.channels:
-                if (_channel.start_node_id == start_node_id and _channel.end_node_id == end_node_id) \
-                        or (_channel.start_node_id == end_node_id and _channel.end_node_id == start_node_id):
+                if ((_channel.start_node_id == start_node_id)
+                    and (_channel.end_node_id == end_node_id)) \
+                        or ((_channel.start_node_id == end_node_id)
+                            and (_channel.end_node_id == start_node_id)):
                     global_channels_remove_id = _channel
                     node.channels.remove(_channel)
                     break

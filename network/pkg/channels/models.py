@@ -1,4 +1,3 @@
-
 from network.pkg.message.sender import statistic_table, establish_connections
 from network.settings import CAPACITY
 import random
@@ -8,7 +7,8 @@ import datetime
 class Channel:
     def __init__(self, id, start_node_id, end_node_id, weight,
                  type, start_node_buffer,
-                 end_node_buffer, is_busy, message_buffer, error_prob, shutdown=0):
+                 end_node_buffer, is_busy, message_buffer, error_prob,
+                 shutdown=0):
         self.id = id
         self.weight = weight
         self.type = type
@@ -46,14 +46,8 @@ class Channel:
         :return: None
         """
         if id == self.start_node_id:
-            # if ('response' in msg.type_message):
-            #     self.start_node_buffer.insert(0, msg)
-            # else:
             self.start_node_buffer.append(msg)
         else:
-            # if ('response' in msg.type_message):
-            #     self.end_node_buffer.insert(0, msg)
-            # else:
             self.end_node_buffer.append(msg)
 
     def remove_from_buffer(self, id, msg):
@@ -83,7 +77,9 @@ class Channel:
         :param id: node id
         :return: boolean
         """
-        if (self.is_busy == 1) and ('response' not in msg.type_message) and (not self.is_established(msg)):
+        if (self.is_busy == 1) \
+                and ('response' not in msg.type_message) \
+                and (not self.is_established(msg)):
             return False
         if self.type == 'duplex':
             if self.message_buffer[str(id)]:
@@ -134,11 +130,6 @@ class Channel:
                     self.message_buffer[key] = 0
                 else:
                     msg.delay -= 1
-            # # FOR TEST
-            # # DELETE AFTER
-            #     self.__send_message(key, msg)
-            #     self.message_buffer[key] = 0
-            # #THIS
 
     def __send_message(self, key, msg):
         """
@@ -160,10 +151,8 @@ class Channel:
                     self.end_node_buffer.insert(0, msg)
             return False
         else:
-            statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node, datetime.datetime.now)
-            # print('DROPED')
-            # # self.add_to_buffer(key, msg)
-            # print('{}'.format(msg.type_message))
+            statistic_table['0'].add_row('ERROR', msg.from_node, msg.to_node,
+                                         datetime.datetime.now)
 
             if key == self.start_node_id:
                 self.start_node_buffer.insert(0, msg)

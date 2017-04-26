@@ -5,29 +5,24 @@ from network.settings.common import SPLITED_SIZE, SERVICE_SIZE
 import random
 import datetime
 
+
 MESSAGE_PROBABILITY = 0.5
 
 
-def generate_message(from_node, to_node, type_message, info_size, service_size=SERVICE_SIZE):
+def generate_message(from_node, to_node, type_message, info_size,
+                     service_size=SERVICE_SIZE):
     time = datetime.datetime.now()
-    # service_size = 0
+
     delay = 0
-    message = Message(time, from_node, to_node, type_message, info_size, service_size, delay)
+    message = Message(time, from_node, to_node, type_message, info_size,
+                      service_size, delay)
     return message
 
 
-# def generate_message(msg):
-#     return Message(datetime.datetime.now(),
-#                    msg.from_node,
-#                    msg.to_node,
-#                    'error',
-#                    msg.info_size,
-#                    msg.service_size,
-#                    msg.delay)
-
-
-def generate_message_json(from_node, to_node, type_message, info_size, service_size):
-    message = generate_message(from_node, to_node, type_message, info_size, service_size)
+def generate_message_json(from_node, to_node, type_message, info_size,
+                          service_size):
+    message = generate_message(from_node, to_node, type_message, info_size,
+                               service_size)
     return JSONMessageSerializer.encode(message)
 
 
@@ -68,7 +63,8 @@ def generate_new_message(network, type, size):
         to_node = random.choice(network['nodes'])
         while from_node.address == to_node.address:
             to_node = random.choice(network['nodes'])
-        message = generate_message(from_node.address, to_node.address, type, size, SERVICE_SIZE)
+        message = generate_message(from_node.address, to_node.address, type,
+                                   size, SERVICE_SIZE)
         return message
 
 

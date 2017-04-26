@@ -19,9 +19,12 @@ class JSONChanelSerializer:
                 "error_prob": "{0:.3f}".format(obj.error_prob),
                 "start_node_id": obj.start_node_id,
                 "end_node_id": obj.end_node_id,
-                "message_buffer": JSONMessageSerializer.encode(obj.message_buffer),
-                "start_node_buffer": JSONMessageSerializer.encode(obj.start_node_buffer),
-                "end_node_buffer": JSONMessageSerializer.encode(obj.end_node_buffer),
+                "message_buffer": JSONMessageSerializer.encode(
+                    obj.message_buffer),
+                "start_node_buffer": JSONMessageSerializer.encode(
+                    obj.start_node_buffer),
+                "end_node_buffer": JSONMessageSerializer.encode(
+                    obj.end_node_buffer),
                 "is_busy": obj.is_busy,
                 "shutdown": obj.shutdown,
             }
@@ -34,18 +37,17 @@ class JSONChanelSerializer:
                 channels.append(JSONChanelSerializer.decode(o))
             return channels
         if isinstance(obj, dict):
-            # print(obj)
-
             return Channel(int(obj['id']),
                            int(obj['start_node_id']),
                            int(obj['end_node_id']),
                            int(obj['weight']),
                            obj['type'],
-                           JSONMessageSerializer.decode(obj['start_node_buffer']),
-                           JSONMessageSerializer.decode(obj['end_node_buffer']),
+                           JSONMessageSerializer.decode(
+                               obj['start_node_buffer']),
+                           JSONMessageSerializer.decode(
+                               obj['end_node_buffer']),
                            int(obj['is_busy']),
                            JSONMessageSerializer.decode(obj['message_buffer']),
                            float(obj['error_prob']),
                            int(obj['shutdown']))
-            # return 0
-            # return Channel(**obj)
+
